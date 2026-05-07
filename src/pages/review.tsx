@@ -276,12 +276,14 @@ export default function ReviewPage() {
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
+                className="bg-white text-zinc-900 border-zinc-200 hover:bg-zinc-50 hover:text-zinc-900"
                 onClick={() => router.push("/extract")}
               >
                 <ArrowLeft className="h-4 w-4" /> Back to transcript
               </Button>
               <Button
                 variant="outline"
+                className="bg-white text-zinc-900 border-zinc-200 hover:bg-zinc-50 hover:text-zinc-900"
                 onClick={() => router.push("/extract")}
               >
                 <RotateCcw className="h-4 w-4" /> Re-extract
@@ -813,7 +815,7 @@ function SuccessScreen({
                     Open in Linear
                   </a>
                 ) : null}
-                <Button variant="outline" onClick={onReset}>
+                <Button variant="outline" className="bg-white text-zinc-900 border-zinc-200 hover:bg-zinc-50 hover:text-zinc-900" onClick={onReset}>
                   <RotateCcw className="h-4 w-4" />
                   Process another transcript
                 </Button>
