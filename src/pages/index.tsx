@@ -3,76 +3,18 @@ import Link from "next/link";
 import {
   ArrowRight,
   Code2,
-  Gauge,
   Hash,
   Lock,
   Mic,
   Monitor,
   Play,
-  ShieldCheck,
   SquareStack,
   Trophy,
-  UserSearch,
   Video,
   WandSparkles,
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
-
-const FEATURES = [
-  {
-    n: "01",
-    icon: Gauge,
-    title: "Extract with confidence",
-    body: "Confidence-scored items, with the source quote attached to every extraction.",
-    foot: (
-      <>
-        <span className="rounded bg-emerald-50 px-1.5 py-0.5 font-medium text-emerald-700">
-          0.94
-        </span>
-        <span className="truncate italic text-zinc-500">
-          &ldquo;Aryan, take Stripe — it&apos;s blocking checkout.&rdquo;
-        </span>
-      </>
-    ),
-  },
-  {
-    n: "02",
-    icon: UserSearch,
-    title: "Smart assignee matching",
-    body: "Fuzzy-matches transcript names — first names, nicknames, typos — to your Linear team.",
-    foot: (
-      <>
-        <span className="font-mono text-zinc-500">&ldquo;marcus&rdquo;</span>
-        <ArrowRight className="h-3 w-3 text-zinc-400" />
-        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-sky-200 text-[9px] font-medium text-sky-900">
-          MC
-        </span>
-        <span className="text-zinc-700">Marcus Chen</span>
-        <span className="ml-auto font-medium text-emerald-700">88%</span>
-      </>
-    ),
-  },
-  {
-    n: "03",
-    icon: ShieldCheck,
-    title: "Review before push",
-    body: "Bulk actions, inline edits, source-of-truth quotes. No surprises in your board.",
-    foot: (
-      <>
-        <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-zinc-700">
-          Bulk priority
-        </span>
-        <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-zinc-700">
-          Reassign
-        </span>
-        <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-zinc-700">
-          Skip
-        </span>
-      </>
-    ),
-  },
-];
 
 const LOGOS = [
   { icon: SquareStack, label: "Linear" },
@@ -167,92 +109,6 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          </div>
-        </section>
-
-        {/* Feature cards */}
-        <section id="how" className="border-t border-zinc-200">
-          <div className="mx-auto max-w-6xl px-6 py-20">
-            <div className="max-w-2xl">
-              <div className="text-forge text-xs font-semibold uppercase tracking-wider">
-                How it works
-              </div>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight">
-                A pipeline you can actually trust.
-              </h2>
-              <p className="mt-3 leading-relaxed text-zinc-600">
-                Three stages, one file of context. Each step shows its work so
-                you never have to guess what the model heard.
-              </p>
-            </div>
-            <div className="mt-12 grid gap-5 md:grid-cols-3">
-              {FEATURES.map((f) => (
-                <div
-                  key={f.n}
-                  className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="bg-forge-soft text-forge flex h-9 w-9 items-center justify-center rounded-md">
-                      <f.icon className="h-5 w-5" />
-                    </div>
-                    <span className="font-mono text-[11px] text-zinc-400">
-                      {f.n}
-                    </span>
-                  </div>
-                  <h3 className="mt-5 text-base font-semibold tracking-tight">
-                    {f.title}
-                  </h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-zinc-600">
-                    {f.body}
-                  </p>
-                  <div className="mt-5 flex items-center gap-2 border-t border-zinc-100 pt-5 text-[11px]">
-                    {f.foot}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Business impact */}
-        <section
-          id="impact"
-          className="border-y border-zinc-200 bg-zinc-50"
-        >
-          <div className="mx-auto max-w-6xl px-6 py-20">
-            <div className="grid items-end gap-10 md:grid-cols-12">
-              <div className="md:col-span-5">
-                <div className="text-forge text-xs font-semibold uppercase tracking-wider">
-                  Business impact
-                </div>
-                <h2 className="mt-3 text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl">
-                  Save <span className="text-forge">$130K/year</span> on a
-                  20-person team.
-                </h2>
-              </div>
-              <div className="grid grid-cols-3 gap-3 md:col-span-7">
-                <Stat number="4–6" unit="hrs/wk" body="Time PMs spend converting notes manually." />
-                <Stat
-                  number="95"
-                  unit="%"
-                  body="Reduction in that overhead with TicketForge."
-                  accent
-                />
-                <Stat
-                  number="10"
-                  unit="min"
-                  body="Average time per meeting with TicketForge."
-                />
-              </div>
-            </div>
-            <p className="mt-10 max-w-3xl leading-relaxed text-zinc-600">
-              Engineering managers spend 4–6 hours per week converting meeting
-              notes into tickets. For a 20-person product + engineering team at
-              an average loaded cost of $90K/year, that&apos;s{" "}
-              <span className="font-medium text-zinc-900">$144K/year</span> in
-              lost capacity. TicketForge reduces this to ~10 minutes per
-              meeting.
-            </p>
           </div>
         </section>
 

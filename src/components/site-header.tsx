@@ -29,12 +29,12 @@ export function SiteHeader({
 
         {variant === "marketing" ? (
           <nav className="hidden items-center gap-7 text-sm text-zinc-600 md:flex">
-            <a href="#how" className="hover:text-zinc-900">
+            <Link href="/how-it-works" className="hover:text-zinc-900">
               How it works
-            </a>
-            <a href="#impact" className="hover:text-zinc-900">
+            </Link>
+            <Link href="/impact" className="hover:text-zinc-900">
               Business impact
-            </a>
+            </Link>
             <a
               href="https://linear.app"
               target="_blank"
