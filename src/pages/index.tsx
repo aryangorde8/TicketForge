@@ -1,15 +1,12 @@
 import Head from "next/head";
 import Link from "next/link";
 import {
-  ArrowRight,
-  Code2,
   Hash,
   Lock,
   Mic,
   Monitor,
   Play,
   SquareStack,
-  Trophy,
   Video,
   WandSparkles,
 } from "lucide-react";
@@ -112,64 +109,8 @@ export default function Home() {
           </div>
         </section>
 
-        <footer className="border-t border-zinc-200 bg-white">
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-10">
-            <div className="flex items-center gap-2 text-sm text-zinc-600">
-              <span className="relative inline-flex h-6 w-6 items-center justify-center rounded bg-gradient-to-br from-[#5E6AD2] to-[#7B86E0] text-white">
-                <WandSparkles className="h-3.5 w-3.5" />
-              </span>
-              <span className="font-semibold text-zinc-900">TicketForge</span>
-              <span className="text-zinc-400">·</span>
-              <span>A hackathon submission, 2026</span>
-            </div>
-            <div className="flex items-center gap-5 text-sm text-zinc-600">
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 hover:text-zinc-900"
-              >
-                <Code2 className="h-4 w-4" /> GitHub
-              </a>
-              <a
-                href="https://devpost.com"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 hover:text-zinc-900"
-              >
-                <Trophy className="h-4 w-4" /> Devpost
-              </a>
-            </div>
-          </div>
-        </footer>
       </div>
     </>
-  );
-}
-
-function Stat({
-  number,
-  unit,
-  body,
-  accent,
-}: {
-  number: string;
-  unit: string;
-  body: string;
-  accent?: boolean;
-}) {
-  return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-5">
-      <div
-        className={`text-3xl font-semibold tracking-tight ${
-          accent ? "text-forge" : "text-zinc-900"
-        }`}
-      >
-        {number}
-        <span className="text-base font-medium text-zinc-500"> {unit}</span>
-      </div>
-      <div className="mt-1 text-xs leading-relaxed text-zinc-600">{body}</div>
-    </div>
   );
 }
 
