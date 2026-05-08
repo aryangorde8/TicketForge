@@ -824,17 +824,20 @@ body {
 @layer utilities {
   .word-huge {
     font-weight: 700;
-    font-size: clamp(80px, 18vw, 240px);
-    letter-spacing: -0.06em;
-    line-height: 0.85;
-    background: linear-gradient(180deg, var(--ink) 0%, color-mix(in srgb, var(--bg) 70%, var(--ink) 30%) 100%);
+    font-size: clamp(56px, 13vw, 168px);
+    letter-spacing: -0.05em;
+    line-height: 0.92;
+    background: linear-gradient(180deg, var(--ink) 0%, var(--ink) 55%, color-mix(in srgb, var(--bg) 50%, var(--ink) 50%) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     user-select: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
   }
   [data-theme="dark"] .word-huge {
-    background: linear-gradient(180deg, #f5f5fa 0%, #5e6ad2 60%, transparent 100%);
+    background: linear-gradient(180deg, #f5f5fa 0%, #c7cef0 50%, #5e6ad2 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
