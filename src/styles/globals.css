@@ -826,15 +826,15 @@ body {
     font-weight: 700;
     font-size: clamp(56px, 13vw, 168px);
     letter-spacing: -0.05em;
-    line-height: 0.92;
-    background: linear-gradient(180deg, var(--ink) 0%, var(--ink) 55%, color-mix(in srgb, var(--bg) 50%, var(--ink) 50%) 100%);
+    line-height: 1.15;
+    padding-bottom: 0.12em;
+    background: linear-gradient(180deg, var(--ink) 0%, var(--ink) 60%, color-mix(in srgb, var(--bg) 45%, var(--ink) 55%) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     user-select: none;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: clip;
+    overflow: visible;
   }
   [data-theme="dark"] .word-huge {
     background: linear-gradient(180deg, #f5f5fa 0%, #c7cef0 50%, #5e6ad2 100%);
