@@ -1,12 +1,31 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import Script from "next/script";
-import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import {
+  Fraunces,
+  Geist,
+  Geist_Mono,
+  Instrument_Serif,
+} from "next/font/google";
 
-const inter = Inter({
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: "variable",
+  style: ["normal", "italic"],
+  axes: ["opsz", "SOFT"],
+});
+
+const geist = Geist({
   subsets: ["latin"],
   variable: "--font-sans",
   weight: ["300", "400", "500", "600", "700", "800"],
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  weight: ["400", "500", "600"],
 });
 
 const instrumentSerif = Instrument_Serif({
@@ -14,12 +33,6 @@ const instrumentSerif = Instrument_Serif({
   variable: "--font-serif",
   weight: ["400"],
   style: ["italic", "normal"],
-});
-
-const jetbrains = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-  weight: ["400", "500"],
 });
 
 const themeBootstrap = `
@@ -46,7 +59,7 @@ export default function App({ Component, pageProps }: AppProps) {
         dangerouslySetInnerHTML={{ __html: themeBootstrap }}
       />
       <main
-        className={`${inter.variable} ${instrumentSerif.variable} ${jetbrains.variable} font-sans antialiased`}
+        className={`${fraunces.variable} ${geist.variable} ${geistMono.variable} ${instrumentSerif.variable} font-sans antialiased`}
       >
         <div className="grain" aria-hidden />
         <Component {...pageProps} />

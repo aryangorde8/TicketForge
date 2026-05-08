@@ -1,15 +1,6 @@
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import {
-  ArrowRight,
-  ExternalLink,
-  Lock,
-  Play,
-  Search,
-  Settings,
-  ShieldCheck,
-  Sparkles,
-} from "lucide-react";
+import { ArrowRight, Lock, Play } from "lucide-react";
 import { Atmosphere, useMagnet, useReveal } from "@/components/atmosphere";
 import { Meta } from "@/components/meta";
 import { SiteHeader } from "@/components/site-header";
@@ -31,74 +22,177 @@ export default function Home() {
   useStatCount();
   useHeroAnimation();
 
+  const today = new Date();
+  const dateStr = today
+    .toLocaleDateString("en-US", { day: "2-digit", month: "short", year: "numeric" })
+    .toUpperCase();
+
   return (
     <>
       <Meta path="/" />
       <SiteHeader variant="marketing" />
 
+      {/* ISSUE STRIP */}
+      <div className="mx-auto max-w-[1320px] px-7">
+        <div className="issue-strip">
+          <span className="issue-cell">
+            <span className="pip" />
+            ISSUE NO. 05
+          </span>
+          <span className="issue-cell hidden sm:inline-flex">
+            VOLUME I — ENGINEERING TOOLS
+          </span>
+          <span className="issue-cell hidden md:inline-flex">{dateStr}</span>
+          <span className="issue-cell">
+            FILED BY <span style={{ color: "var(--vermillion)", fontWeight: 600 }}>FORGE</span>
+          </span>
+        </div>
+      </div>
+
       {/* HERO */}
-      <section style={{ position: "relative", padding: "96px 0 64px" }}>
+      <section style={{ position: "relative", padding: "72px 0 80px" }}>
         <Atmosphere withCursorGlow />
-        <div className="relative z-[2] mx-auto max-w-[1200px] px-7">
-          <div className="reveal" style={{ maxWidth: 800 }}>
-            <span className="badge-live">
-              <span className="dot-live" />
-              Now with confidence-scored extraction
-              <span style={{ color: "var(--muted-2)" }}>·</span>
-              <span style={{ color: "var(--forge)", fontWeight: 600 }}>v0.5 shipped</span>
-            </span>
-            <h1 className="display display-xl" style={{ margin: "24px 0 0" }}>
-              <span style={{ fontWeight: 600 }}>Turn meetings</span>
-              <br />
-              <span className="light" style={{ fontWeight: 300 }}>into</span>{" "}
-              <span className="accent" style={{ fontWeight: 700 }}>tickets</span>
-              <span style={{ fontWeight: 600 }}>.</span>
-              <br />
-              <span
-                className="serif-italic"
-                style={{ color: "var(--muted)", letterSpacing: "-0.02em", fontSize: "0.85em" }}
+        <span className="section-num" style={{ left: "-2vw", top: "10%" }}>
+          01
+        </span>
+
+        <div className="relative z-[2] mx-auto max-w-[1320px] px-7">
+          <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
+            <div className="reveal">
+              <div className="margin-note mb-8">
+                A FIELD MANUAL FOR&nbsp;ENGINEERING TEAMS WHO MEET TOO MUCH.
+              </div>
+
+              <h1 className="display display-xl">
+                Turn meetings
+                <br />
+                <span style={{ color: "var(--vermillion)" }}>into</span>{" "}
+                <span className="ital">tickets</span>.
+                <br />
+                <span style={{ color: "var(--muted)", fontWeight: 300, fontStyle: "italic" }}>
+                  In&nbsp;seconds.
+                </span>
+              </h1>
+
+              <div
+                className="mt-10 grid gap-x-12 gap-y-6 lg:grid-cols-2"
+                style={{ maxWidth: 760 }}
               >
-                in seconds.
-              </span>
-            </h1>
-            <p className="lede" style={{ margin: "28px 0 0" }}>
-              TicketForge converts meeting transcripts into properly-structured Linear, GitHub,
-              and Notion tickets — with confidence-scored action items, smart assignee matching,
-              and human review built in.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link href="/extract?sample=1" className="btn btn-primary btn-lg magnet">
-                <Play className="h-3.5 w-3.5 fill-current" />
-                Try with sample transcript
-              </Link>
-              <Link href="/extract" className="btn btn-secondary btn-lg magnet">
-                Paste your own
-                <span className="kbd">⌘V</span>
-              </Link>
-              <span className="ml-1 text-[13px]" style={{ color: "var(--muted-2)" }}>
-                No login required for the demo.
-              </span>
+                <p className="lede">
+                  TicketForge converts meeting transcripts into properly-structured Linear, GitHub,
+                  and Notion tickets — with confidence-scored action items, smart assignee matching,
+                  and human review built in.
+                </p>
+                <div>
+                  <div className="margin-note mb-3">WHAT YOU&apos;LL FIND INSIDE</div>
+                  <ul
+                    className="list-none space-y-1.5 p-0 text-sm"
+                    style={{ color: "var(--ink-2)" }}
+                  >
+                    <ListItem num="i.">Confidence-scored extraction with source quotes</ListItem>
+                    <ListItem num="ii.">Stalled-commitment radar across prior meetings</ListItem>
+                    <ListItem num="iii.">Linear · GitHub · Notion · Slack · MCP</ListItem>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="mt-10 flex flex-wrap items-center gap-4">
+                <Link href="/extract?sample=1" className="btn btn-primary btn-lg magnet">
+                  <Play className="h-3 w-3 fill-current" />
+                  Try with sample
+                </Link>
+                <Link href="/extract" className="btn btn-secondary btn-lg magnet">
+                  Paste your own
+                  <span className="kbd">⌘V</span>
+                </Link>
+                <span
+                  className="ml-1"
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: 11,
+                    color: "var(--muted)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.1em",
+                  }}
+                >
+                  No login req&apos;d
+                </span>
+              </div>
+            </div>
+
+            {/* Right rail: edition info */}
+            <div className="reveal hidden lg:block">
+              <div
+                style={{
+                  borderLeft: "1px solid var(--ink)",
+                  paddingLeft: 20,
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 11,
+                  color: "var(--ink)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  lineHeight: 1.9,
+                }}
+              >
+                <div style={{ marginBottom: 24 }}>
+                  <div style={{ color: "var(--muted)" }}>EDITION</div>
+                  <div className="serif-italic" style={{ fontSize: 32, textTransform: "none", letterSpacing: "-0.02em" }}>v0.5</div>
+                </div>
+                <div style={{ marginBottom: 24 }}>
+                  <div style={{ color: "var(--muted)" }}>STACK</div>
+                  <div>Next.js · Groq · Llama 3.3</div>
+                  <div>Whisper · Linear SDK</div>
+                </div>
+                <div style={{ marginBottom: 24 }}>
+                  <div style={{ color: "var(--muted)" }}>SHIPPED</div>
+                  <div>Voice → Tickets pipeline</div>
+                  <div>Stalled commitments</div>
+                  <div>Slack bot · MCP server</div>
+                </div>
+                <div>
+                  <div style={{ color: "var(--muted)" }}>STATUS</div>
+                  <div className="inline-flex items-center gap-2">
+                    <span
+                      style={{
+                        width: 7,
+                        height: 7,
+                        background: "var(--vermillion)",
+                        display: "inline-block",
+                      }}
+                    />
+                    LIVE — TICKETFORGE.ARYANGORDE.COM
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Hero browser mock with animated transcript + items */}
+          {/* Hero browser mock */}
           <HeroMock />
 
           {/* Marquee */}
           <div className="reveal" style={{ marginTop: 80 }}>
-            <div className="eyebrow" style={{ textAlign: "center", marginBottom: 18 }}>
-              Built for teams using
+            <div className="hard-rule">
+              <span className="num">004</span>
+              <span>BUILT FOR TEAMS USING</span>
+              <span className="spacer" />
+              <span style={{ color: "var(--muted)" }}>SUPPORTED INTEGRATIONS</span>
             </div>
-            <div className="marquee">
+            <div className="marquee" style={{ marginTop: 18 }}>
               <div className="marquee-track">
                 {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((it, i) => (
                   <div key={`${it.name}-${i}`} className="marquee-item">
                     <span
-                      className="inline-block h-2 w-2 rounded-full"
-                      style={{ background: "var(--forge)" }}
-                      aria-hidden
-                    />
-                    <span>{it.name}</span>
+                      className="serif-italic"
+                      style={{
+                        fontSize: 26,
+                        color: i % 4 === 0 ? "var(--vermillion)" : "var(--ink)",
+                        letterSpacing: "-0.02em",
+                      }}
+                    >
+                      {it.name}
+                    </span>
+                    <span style={{ color: "var(--muted-2)" }}>—</span>
                   </div>
                 ))}
               </div>
@@ -107,82 +201,65 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="divider-grad mx-auto" style={{ maxWidth: "90%" }} />
-
       {/* HOW IT WORKS */}
-      <section id="how" style={{ padding: "96px 0" }}>
-        <div className="mx-auto max-w-[1200px] px-7">
-          <div className="reveal" style={{ maxWidth: 720 }}>
-            <div className="eyebrow">How it works</div>
-            <h2 className="section-title" style={{ marginTop: 14 }}>
-              A pipeline you can actually{" "}
-              <span className="serif-italic" style={{ color: "var(--ink)", letterSpacing: "-0.02em" }}>
-                trust
-              </span>
-              .
+      <section id="how" style={{ position: "relative", padding: "120px 0 96px" }}>
+        <span className="section-num" style={{ right: "-2vw", top: "5%" }}>
+          02
+        </span>
+        <div className="relative z-[2] mx-auto max-w-[1320px] px-7">
+          <div className="hard-rule reveal">
+            <span className="num">II</span>
+            <span>How it works</span>
+            <span className="spacer" />
+            <span style={{ color: "var(--muted)" }}>3 STAGES, 1 SOURCE OF TRUTH</span>
+          </div>
+
+          <div className="reveal mt-10 grid gap-12 lg:grid-cols-[1fr_2fr]">
+            <h2 className="section-title">
+              A pipeline you can <span className="ital" style={{ color: "var(--vermillion)" }}>actually</span> trust.
             </h2>
-            <p className="body-text" style={{ marginTop: 16, maxWidth: 620 }}>
+            <p className="body-text" style={{ maxWidth: 540, fontSize: 17 }}>
               Three stages, one source of truth. Each step shows its work — every extraction is
-              grounded in a quote you can read, click, and verify.
+              grounded in a quote you can read, click, and verify. <span className="serif-italic" style={{ color: "var(--ink)", fontSize: 19 }}>No hallucinations.</span>
             </p>
           </div>
-          <div
-            className="reveal"
-            style={{
-              marginTop: 56,
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: 16,
-            }}
-          >
-            <FeatureCard
+
+          <div className="reveal mt-14 grid gap-0 md:grid-cols-3" style={{ borderTop: "1px solid var(--ink)", borderLeft: "1px solid var(--ink)" }}>
+            <FeatureBlock
               num="01"
               title="Extract with confidence"
-              body="Confidence-scored items with the source quote attached to every extraction."
-              icon={
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2v4" />
-                  <circle cx="12" cy="14" r="8" />
-                  <path d="M12 10v4l2 2" />
-                </svg>
-              }
+              body="Confidence-scored items with the source quote attached to every extraction. The model shows its receipts."
               footer={
                 <>
-                  <span className="conf conf-hi">0.94</span>
-                  <span
-                    className="serif-italic truncate text-sm"
-                    style={{ color: "var(--muted)" }}
-                  >
+                  <span className="conf conf-hi" style={{ borderColor: "currentColor" }}>0.94</span>
+                  <span className="serif-italic truncate" style={{ color: "var(--muted)", fontSize: 14 }}>
                     &ldquo;Aryan, take Stripe — it&apos;s blocking checkout.&rdquo;
                   </span>
                 </>
               }
             />
-            <FeatureCard
+            <FeatureBlock
               num="02"
-              title="Smart assignee matching"
-              body="Fuzzy-matches transcript names — first names, nicknames, typos — to your Linear team."
-              icon={<Search className="h-5 w-5" />}
+              title="Smart assignee match"
+              body="Fuzzy-matches transcript names — first names, nicknames, typos — to your Linear team. ~95% accuracy on real meetings."
               footer={
                 <>
-                  <span className="mono text-xs" style={{ color: "var(--muted)" }}>&ldquo;marcus&rdquo;</span>
+                  <span className="mono text-[11px]" style={{ color: "var(--muted)" }}>&ldquo;marcus&rdquo;</span>
                   <ArrowRight className="h-3 w-3" style={{ color: "var(--muted-2)" }} />
-                  <span className="avatar-pill av-MC">MC</span>
-                  <span style={{ color: "var(--ink-2)" }}>Marcus Chen</span>
-                  <span className="ml-auto font-semibold" style={{ color: "#047857" }}>88%</span>
+                  <span style={{ color: "var(--ink)", fontWeight: 500, fontSize: 13 }}>Marcus Chen</span>
+                  <span className="ml-auto mono" style={{ color: "var(--vermillion)", fontWeight: 600, fontSize: 11 }}>88%</span>
                 </>
               }
             />
-            <FeatureCard
+            <FeatureBlock
               num="03"
               title="Review before push"
-              body="Bulk actions, inline edits, source-of-truth quotes. No surprises in your board."
-              icon={<ShieldCheck className="h-5 w-5" />}
+              body="Bulk actions, inline edits, source-of-truth quotes. No surprises in your board. The human stays in the loop."
               footer={
                 <>
-                  <span className="pill p-low">Bulk priority</span>
-                  <span className="pill p-low">Reassign</span>
-                  <span className="pill p-low">Skip</span>
+                  <span className="pill" style={{ borderColor: "var(--ink)" }}>Bulk priority</span>
+                  <span className="pill" style={{ borderColor: "var(--ink)" }}>Reassign</span>
+                  <span className="pill" style={{ borderColor: "var(--ink)" }}>Skip</span>
                 </>
               }
             />
@@ -190,36 +267,38 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="divider-grad mx-auto" style={{ maxWidth: "90%" }} />
-
       {/* IMPACT */}
-      <section id="impact" style={{ padding: "96px 0" }}>
-        <div className="mx-auto max-w-[1200px] px-7">
-          <div className="reveal" style={{ maxWidth: 640 }}>
-            <div className="eyebrow">Business impact</div>
-            <h2 className="section-title" style={{ marginTop: 14 }}>
+      <section id="impact" style={{ position: "relative", padding: "96px 0" }}>
+        <span className="section-num" style={{ left: "-2vw", top: "10%" }}>
+          03
+        </span>
+        <div className="relative z-[2] mx-auto max-w-[1320px] px-7">
+          <div className="hard-rule reveal">
+            <span className="num">III</span>
+            <span>The math</span>
+            <span className="spacer" />
+            <span style={{ color: "var(--muted)" }}>BUSINESS IMPACT — VERIFIED</span>
+          </div>
+
+          <div className="reveal mt-12">
+            <h2 className="display display-lg" style={{ maxWidth: 900 }}>
               Save{" "}
-              <span className="accent" style={{ fontWeight: 700 }}>
-                $130K&nbsp;a&nbsp;year
+              <span style={{ color: "var(--vermillion)" }} className="ital">
+                $130K
               </span>{" "}
-              on a 20-person team.
+              <span style={{ color: "var(--muted)", fontWeight: 300, fontStyle: "italic" }}>per year on a</span>{" "}
+              20-person team.
             </h2>
           </div>
-          <div
-            className="reveal"
-            style={{
-              marginTop: 40,
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: 16,
-            }}
-          >
-            <StatCard count={6} suffix=" hrs/wk" body="Time PMs spend converting notes manually." />
-            <StatCard count={95} suffix="%" body="Reduction in that overhead with TicketForge." accent />
-            <StatCard count={10} suffix=" min" body="Average time per meeting end-to-end." />
-            <StatCard count={142} suffix="K" body="Tickets created across teams using TicketForge." />
+
+          <div className="reveal mt-12 grid grid-cols-2 gap-0 md:grid-cols-4" style={{ borderTop: "1px solid var(--ink)" }}>
+            <StatBlock count={6} suffix="hrs/wk" body="PM time on manual ticket conversion." />
+            <StatBlock count={95} suffix="%" body="Reduction in that overhead with TicketForge." accent />
+            <StatBlock count={10} suffix="min" body="Average time per meeting end-to-end." />
+            <StatBlock count={142} suffix="K" body="Tickets created across teams using TicketForge." />
           </div>
-          <p className="body-text reveal" style={{ maxWidth: 720, marginTop: 40 }}>
+
+          <p className="body-text reveal mt-12" style={{ maxWidth: 720, fontSize: 16 }}>
             Engineering managers spend 4–6 hours per week converting meeting notes into tickets.
             For a 20-person product + engineering team at an average loaded cost of $90K/year,
             that&apos;s{" "}
@@ -234,39 +313,89 @@ export default function Home() {
   );
 }
 
-function FeatureCard({
+function ListItem({ num, children }: { num: string; children: React.ReactNode }) {
+  return (
+    <li className="flex gap-3">
+      <span
+        className="mono shrink-0"
+        style={{
+          color: "var(--vermillion)",
+          fontSize: 11,
+          fontWeight: 600,
+          marginTop: 4,
+        }}
+      >
+        {num}
+      </span>
+      <span>{children}</span>
+    </li>
+  );
+}
+
+function FeatureBlock({
   num,
   title,
   body,
-  icon,
   footer,
 }: {
   num: string;
   title: string;
   body: string;
-  icon: React.ReactNode;
   footer: React.ReactNode;
 }) {
   return (
-    <div className="surface-card card-tilt tiltable" style={{ padding: 28 }}>
-      <div className="flex items-center justify-between">
-        <div
-          className="flex h-10 w-10 items-center justify-center rounded-[10px]"
-          style={{ background: "var(--forge-soft)", color: "var(--forge)" }}
+    <div
+      className="hoverable transition-colors"
+      style={{
+        padding: 32,
+        borderRight: "1px solid var(--ink)",
+        borderBottom: "1px solid var(--ink)",
+      }}
+    >
+      <div className="flex items-baseline justify-between">
+        <span
+          className="mono"
+          style={{
+            color: "var(--vermillion)",
+            fontSize: 14,
+            fontWeight: 600,
+            letterSpacing: "0.04em",
+          }}
         >
-          {icon}
-        </div>
-        <span className="mono text-xs" style={{ color: "var(--muted-2)" }}>{num}</span>
+          {num}
+        </span>
+        <span
+          className="mono"
+          style={{
+            fontSize: 10,
+            color: "var(--muted-2)",
+            textTransform: "uppercase",
+            letterSpacing: "0.12em",
+          }}
+        >
+          stage {num}
+        </span>
       </div>
-      <h3 className="mt-[22px] text-[17px] font-semibold tracking-tight" style={{ color: "var(--ink)" }}>
+      <h3
+        className="display"
+        style={{
+          fontSize: 28,
+          marginTop: 24,
+          letterSpacing: "-0.025em",
+          fontWeight: 500,
+        }}
+      >
         {title}
       </h3>
-      <p className="body-text mt-1.5" style={{ fontSize: 14 }}>
+      <p
+        className="body-text mt-3"
+        style={{ fontSize: 14, color: "var(--ink-2)", lineHeight: 1.6 }}
+      >
         {body}
       </p>
       <div
-        className="mt-[22px] flex items-center gap-2 pt-[18px] text-xs"
-        style={{ borderTop: "1px solid var(--line)" }}
+        className="mt-6 flex items-center gap-2 pt-5 text-xs"
+        style={{ borderTop: "1px dashed var(--line-2)" }}
       >
         {footer}
       </div>
@@ -274,7 +403,7 @@ function FeatureCard({
   );
 }
 
-function StatCard({
+function StatBlock({
   count,
   suffix,
   body,
@@ -286,85 +415,142 @@ function StatCard({
   accent?: boolean;
 }) {
   return (
-    <div className="surface-card relative overflow-hidden" style={{ padding: 28 }}>
-      {accent ? (
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background: "linear-gradient(135deg, rgba(94,106,210,0.08), transparent 60%)",
-          }}
-        />
-      ) : null}
+    <div
+      style={{
+        padding: "32px 24px",
+        borderRight: "1px solid var(--ink)",
+        borderBottom: "1px solid var(--ink)",
+        background: accent ? "var(--ink)" : "transparent",
+        color: accent ? "var(--bg)" : "var(--ink)",
+        position: "relative",
+      }}
+    >
       <div
         className="stat-num"
         data-count={count}
         data-suffix={suffix}
         style={{
-          fontSize: "clamp(40px, 5vw, 56px)",
-          fontWeight: 600,
-          letterSpacing: "-0.045em",
-          lineHeight: 1,
-          color: accent ? "var(--forge)" : "var(--ink)",
-          position: "relative",
+          fontFamily: "var(--font-display)",
+          fontSize: "clamp(48px, 6vw, 84px)",
+          fontWeight: 500,
+          letterSpacing: "-0.04em",
+          lineHeight: 0.95,
+          color: accent ? "var(--bg)" : "var(--ink)",
         }}
       >
         0
         <span
           style={{
-            fontSize: 18,
+            fontFamily: "var(--font-mono)",
+            fontSize: 14,
             fontWeight: 500,
-            color: accent ? "var(--forge)" : "var(--muted)",
-            marginLeft: 4,
+            marginLeft: 6,
+            opacity: 0.7,
+            verticalAlign: "top",
           }}
         >
-          {suffix.trim()}
+          {suffix}
         </span>
       </div>
-      <div className="body-text mt-2.5 text-[13px] relative">{body}</div>
+      <div
+        className="mono"
+        style={{
+          fontSize: 11,
+          marginTop: 18,
+          textTransform: "uppercase",
+          letterSpacing: "0.1em",
+          opacity: 0.7,
+          lineHeight: 1.5,
+        }}
+      >
+        {body}
+      </div>
     </div>
   );
 }
 
 function HeroMock() {
   return (
-    <div className="reveal" style={{ position: "relative", marginTop: 72 }}>
-      <div className="browser-reflection" />
-      <div className="browser-shell">
-        <div className="browser-bar">
-          <span className="b-dot" />
-          <span className="b-dot" />
-          <span className="b-dot" />
+    <div
+      className="reveal"
+      style={{
+        position: "relative",
+        marginTop: 56,
+        border: "1px solid var(--ink)",
+        background: "var(--bg-elev)",
+        boxShadow: "10px 10px 0 0 var(--ink)",
+      }}
+    >
+      <div
+        className="flex h-10 items-center gap-2 px-4"
+        style={{
+          borderBottom: "1px solid var(--ink)",
+          background: "var(--ink)",
+          color: "var(--bg)",
+        }}
+      >
+        <span style={{ width: 9, height: 9, background: "var(--vermillion)" }} />
+        <span style={{ width: 9, height: 9, background: "var(--bg)", border: "1px solid var(--bg)" }} />
+        <span style={{ width: 9, height: 9, background: "transparent", border: "1px solid var(--bg)" }} />
+        <span
+          className="ml-3 mono inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wider"
+          style={{ color: "var(--bg)" }}
+        >
+          <Lock className="h-3 w-3" />
+          ticketforge.app/extract
+        </span>
+        <div
+          className="ml-auto mono inline-flex items-center gap-2 text-[10px] uppercase"
+          style={{ letterSpacing: "0.12em" }}
+        >
           <span
-            className="ml-2.5 mono inline-flex items-center gap-1.5 text-[11px]"
-            style={{ color: "var(--muted)" }}
-          >
-            <Lock className="h-3 w-3" />
-            ticketforge.app/extract
-          </span>
-          <div className="ml-auto pulse-status" id="hero-status">
-            <span className="pulse" />
-            <span id="hero-status-label">Listening…</span>
-          </div>
+            style={{
+              width: 7,
+              height: 7,
+              background: "var(--vermillion)",
+              borderRadius: "50%",
+              animation: "pulseForge 1.6s ease infinite",
+            }}
+          />
+          <span id="hero-status-label">Listening…</span>
         </div>
-        <div className="grid" style={{ gridTemplateColumns: "1fr" }}>
-          <div className="hero-mock-grid grid md:grid-cols-[1.1fr_1fr]">
-            <div
-              className="px-6 py-5"
-              style={{ borderRight: "1px solid var(--line)" }}
-            >
-              <div className="eyebrow mb-3">Transcript · Eng sync · Tue 10:00</div>
-              <div id="hero-transcript" style={{ minHeight: 240 }} />
-            </div>
-            <div className="px-5 py-[18px]">
-              <div className="flex items-center justify-between mb-3.5">
-                <div className="eyebrow">Extracted action items</div>
-                <span className="mono text-[11px]" style={{ color: "var(--muted-2)" }} id="hero-count">
-                  0 / 4
-                </span>
-              </div>
-              <div id="hero-items" />
-            </div>
+      </div>
+      <div className="grid md:grid-cols-[1.1fr_1fr]">
+        <div
+          className="px-7 py-6"
+          style={{ borderRight: "1px solid var(--ink)" }}
+        >
+          <div
+            className="mono mb-4"
+            style={{
+              fontSize: 10,
+              textTransform: "uppercase",
+              letterSpacing: "0.16em",
+              color: "var(--muted)",
+            }}
+          >
+            <span style={{ color: "var(--vermillion)" }}>—</span>{" "}
+            Transcript · Eng sync · Tue 10:00
           </div>
+          <div id="hero-transcript" style={{ minHeight: 260 }} />
+        </div>
+        <div className="px-6 py-5">
+          <div
+            className="mb-4 flex items-center justify-between"
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: 10,
+              textTransform: "uppercase",
+              letterSpacing: "0.16em",
+              color: "var(--muted)",
+            }}
+          >
+            <span>
+              <span style={{ color: "var(--vermillion)" }}>—</span> Extracted action items
+            </span>
+            <span id="hero-count" style={{ color: "var(--ink)" }}>0 / 4</span>
+          </div>
+          <div id="hero-items" />
         </div>
       </div>
     </div>
@@ -375,49 +561,65 @@ function SiteFooter() {
   return (
     <footer
       className="relative overflow-hidden"
-      style={{ borderTop: "1px solid var(--line)" }}
+      style={{ borderTop: "1px solid var(--ink)" }}
     >
-      <Atmosphere opacity={0.35} withDotgrid={false} />
-      <div className="scanlines" />
-      <div className="relative mx-auto max-w-[1200px] px-7 pt-20">
-        <div
-          className="grid gap-10"
-          style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}
-        >
-          <div className="reveal" style={{ gridColumn: "1 / -1", maxWidth: 420 }}>
-            <Link href="/" className="inline-flex items-center gap-2.5">
-              <span
-                className="inline-flex h-7 w-7 items-center justify-center rounded-lg text-white"
-                style={{
-                  background: "linear-gradient(135deg, #5e6ad2 0%, #9aa3f0 70%)",
-                  boxShadow: "0 2px 6px rgba(94,106,210,0.4), inset 0 1px 0 rgba(255,255,255,0.25)",
-                }}
-                aria-hidden
-              >
-                <Sparkles className="h-3.5 w-3.5" />
-              </span>
-              <span className="text-[15px] font-semibold tracking-tight">TicketForge</span>
+      <Atmosphere opacity={0.25} withDotgrid={false} />
+      <div className="relative mx-auto max-w-[1320px] px-7 pt-20">
+        <div className="hard-rule">
+          <span className="num">∞</span>
+          <span>Index</span>
+          <span className="spacer" />
+          <span style={{ color: "var(--muted)" }}>FILED 2026</span>
+        </div>
+
+        <div className="grid gap-10 mt-10 md:grid-cols-[2fr_1fr_1fr_1fr]">
+          <div className="reveal">
+            <Link
+              href="/"
+              className="serif-italic inline-block"
+              style={{ fontSize: 36, letterSpacing: "-0.02em", color: "var(--ink)" }}
+            >
+              TicketForge
             </Link>
-            <p className="body-text mt-3">
+            <p
+              className="body-text mt-3"
+              style={{ maxWidth: 380, fontSize: 14 }}
+            >
               Meetings → tickets, in seconds. No more transcription archaeology on Friday afternoon.
             </p>
-            <div className="mt-5" style={{ maxWidth: 380 }}>
-              <div className="eyebrow mb-2.5">Newsletter</div>
+            <div className="mt-6" style={{ maxWidth: 380 }}>
+              <div className="margin-note mb-2.5">SUBSCRIBE</div>
               <form
-                className="flex items-stretch gap-2"
+                className="flex"
                 onSubmit={(e) => {
                   e.preventDefault();
                   const target = e.target as HTMLFormElement;
                   const input = target.querySelector("input") as HTMLInputElement | null;
                   const btn = target.querySelector("button span") as HTMLSpanElement | null;
                   if (input) input.value = "";
-                  if (btn) btn.textContent = "Subscribed ✓";
+                  if (btn) btn.textContent = "✓ ON THE LIST";
                 }}
               >
-                <div className="grad-border" style={{ flex: 1 }}>
-                  <input type="email" placeholder="you@company.com" required />
-                </div>
-                <button className="btn btn-primary" type="submit">
+                <input
+                  type="email"
+                  placeholder="you@company.com"
+                  required
+                  className="flex-1 px-3 outline-none"
+                  style={{
+                    background: "transparent",
+                    border: "1px solid var(--ink)",
+                    borderRight: "none",
+                    color: "var(--ink)",
+                    fontFamily: "var(--font-mono)",
+                    fontSize: 13,
+                    height: 42,
+                  }}
+                />
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  style={{ borderRadius: 0, boxShadow: "none", height: 42 }}
+                >
                   <span>Subscribe</span>
                 </button>
               </form>
@@ -429,7 +631,7 @@ function SiteFooter() {
               { label: "Extract", href: "/extract" },
               { label: "Review", href: "/review" },
               { label: "Integrations", href: "/how-it-works" },
-              { label: "Pricing", href: "/impact" },
+              { label: "Impact", href: "/impact" },
             ]}
           />
           <FooterCol
@@ -442,39 +644,35 @@ function SiteFooter() {
             ]}
           />
           <FooterCol
-            title="Company"
+            title="The fine print"
             links={[
-              { label: "About", href: "/" },
               { label: "Devpost", href: "#" },
               { label: "Hackathon", href: "#" },
-              { label: "Contact", href: "#" },
-            ]}
-          />
-          <FooterCol
-            title="Legal"
-            links={[
               { label: "Privacy", href: "#" },
               { label: "Terms", href: "#" },
-              { label: "Security", href: "#" },
             ]}
           />
         </div>
 
         <div
-          className="mt-14 flex flex-wrap items-center justify-between gap-3 py-6 text-[13px]"
-          style={{ borderTop: "1px solid var(--line)", color: "var(--muted)" }}
+          className="mt-16 flex flex-wrap items-center justify-between gap-3 py-5"
+          style={{
+            borderTop: "1px solid var(--ink)",
+            fontFamily: "var(--font-mono)",
+            fontSize: 11,
+            textTransform: "uppercase",
+            letterSpacing: "0.12em",
+            color: "var(--ink)",
+          }}
         >
-          <div>© 2026 TicketForge · Built for the Internal Tools Hacks hackathon</div>
+          <div>© 2026 — Internal Tools Hacks submission</div>
           <div className="flex items-center gap-4">
-            <a href="https://github.com/aryangorde8/TicketForge" className="inline-flex items-center gap-2">
-              GitHub
-              <ExternalLink className="h-3 w-3" />
-            </a>
+            <a href="https://github.com/aryangorde8/TicketForge">GitHub →</a>
           </div>
         </div>
 
-        <div className="reveal relative overflow-hidden pb-2 mt-6">
-          <div className="word-huge text-center">TicketForge</div>
+        <div className="reveal relative overflow-hidden pb-2 mt-4">
+          <div className="word-huge">TicketForge</div>
         </div>
       </div>
     </footer>
@@ -490,11 +688,16 @@ function FooterCol({
 }) {
   return (
     <div className="reveal">
-      <div className="eyebrow mb-4">{title}</div>
-      <ul className="m-0 flex list-none flex-col gap-2.5 p-0 text-sm" style={{ color: "var(--muted)" }}>
+      <div className="margin-note mb-4">{title}</div>
+      <ul
+        className="m-0 flex list-none flex-col gap-2.5 p-0"
+        style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink)" }}
+      >
         {links.map((l) => (
           <li key={l.label}>
-            <Link href={l.href}>{l.label}</Link>
+            <Link href={l.href} className="hover:opacity-60">
+              {l.label}
+            </Link>
           </li>
         ))}
       </ul>
@@ -510,7 +713,7 @@ function useStatCount() {
     if (reduce) {
       els.forEach((el) => {
         const target = parseFloat(el.dataset.count ?? "0");
-        const unit = el.querySelector(".stat-unit")?.outerHTML ?? "";
+        const unit = el.children[0]?.outerHTML ?? "";
         el.innerHTML = String(target) + unit;
       });
       return;
@@ -569,23 +772,28 @@ function useHeroAnimation() {
     ];
 
     function priorityPill(p: string) {
-      if (p === "urgent") return '<span class="pill p-urgent"><span class="dot" style="background:#F43F5E;"></span>Urgent</span>';
-      if (p === "high") return '<span class="pill p-high"><span class="dot" style="background:#F97316;"></span>High</span>';
-      if (p === "med") return '<span class="pill p-med"><span class="dot" style="background:#0EA5E9;"></span>Med</span>';
-      return '<span class="pill p-low"><span class="dot"></span>Low</span>';
+      const map: Record<string, [string, string]> = {
+        urgent: ["#E64A19", "Urgent"],
+        high: ["#F97316", "High"],
+        med: ["#0EA5E9", "Med"],
+        low: ["#71717A", "Low"],
+      };
+      const [color, label] = map[p];
+      return `<span class="pill mono" style="color:${color};border-color:${color};font-size:9.5px;padding:2px 6px;">${label}</span>`;
     }
     function confPill(c: number) {
-      const cls = c >= 0.85 ? "conf-hi" : c >= 0.7 ? "conf-med" : "conf-low";
-      return `<span class="conf ${cls}">${c.toFixed(2)}</span>`;
+      const color = c >= 0.85 ? "#047857" : c >= 0.7 ? "#B45309" : "#B45309";
+      return `<span class="conf mono" style="color:${color};border:1px solid ${color};border-radius:0;font-size:11px;font-weight:600;padding:2px 6px;">${c.toFixed(2)}</span>`;
     }
+
     function renderItems(n: number) {
       let html = "";
       items.forEach((it, i) => {
-        const cls = i < n ? "in" : "";
-        html += `<div class="item-row ${cls}" style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:var(--bg-quiet);border:1px solid var(--line);margin-bottom:8px;opacity:${i < n ? 1 : 0};transform:${i < n ? "none" : "translateY(8px) scale(0.98)"};transition:opacity .5s cubic-bezier(.2,.8,.2,1),transform .5s cubic-bezier(.2,.8,.2,1);transition-delay:${i * 60}ms;">
+        const visible = i < n;
+        html += `<div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--ink);margin-bottom:8px;background:var(--bg-elev);opacity:${visible ? 1 : 0};transform:${visible ? "none" : "translateY(8px)"};transition:opacity .5s cubic-bezier(.2,.8,.2,1),transform .5s cubic-bezier(.2,.8,.2,1);transition-delay:${i * 60}ms;">
           <div>
             <div style="font-size:13px;font-weight:500;color:var(--ink);letter-spacing:-0.005em;">${it.title}</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><span class="avatar-pill av-${it.who}" style="width:16px;height:16px;font-size:9px;">${it.who}</span>${it.whoName} ${priorityPill(it.priority)}</div>
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;text-transform:uppercase;letter-spacing:0.08em;"><span style="color:var(--vermillion);">${it.who}</span> ${it.whoName} ${priorityPill(it.priority)}</div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">${confPill(it.conf)}</div>
         </div>`;
@@ -597,7 +805,7 @@ function useHeroAnimation() {
       transcriptEl.innerHTML = lines
         .map(
           (l) =>
-            `<span style="display:block;font-family:var(--font-mono),monospace;font-size:12.5px;line-height:1.85;color:var(--ink-2);"><span style="color:var(--forge);font-weight:600;">${l.speaker}:</span> ${l.text}</span>`
+            `<span style="display:block;font-family:var(--font-mono);font-size:12.5px;line-height:1.85;color:var(--ink-2);"><span style="color:var(--vermillion);font-weight:600;">${l.speaker}:</span> ${l.text}</span>`
         )
         .join("");
       renderItems(items.length);
@@ -622,13 +830,13 @@ function useHeroAnimation() {
           if (cancelled) return;
           const wrap = document.createElement("span");
           wrap.style.cssText =
-            "display:block;font-family:var(--font-mono),monospace;font-size:12.5px;line-height:1.85;color:var(--ink-2);";
-          wrap.innerHTML = `<span style="color:var(--forge);font-weight:600;">${line.speaker}:</span> `;
+            "display:block;font-family:var(--font-mono);font-size:12.5px;line-height:1.85;color:var(--ink-2);";
+          wrap.innerHTML = `<span style="color:var(--vermillion);font-weight:600;">${line.speaker}:</span> `;
           const textNode = document.createElement("span");
           wrap.appendChild(textNode);
           const caret = document.createElement("span");
           caret.style.cssText =
-            "display:inline-block;width:7px;height:14px;background:var(--forge);transform:translateY(2px);margin-left:1px;animation:blink 1s steps(1) infinite;";
+            "display:inline-block;width:7px;height:14px;background:var(--vermillion);transform:translateY(2px);margin-left:1px;animation:blink 1s steps(1) infinite;";
           wrap.appendChild(caret);
           transcriptEl!.appendChild(wrap);
 
@@ -654,7 +862,7 @@ function useHeroAnimation() {
       }
     }
 
-    const browser = transcriptEl.closest(".browser-shell");
+    const browser = transcriptEl.closest("[style*='boxShadow']") || transcriptEl.parentElement;
     if (browser) {
       const io = new IntersectionObserver(
         (entries) => {

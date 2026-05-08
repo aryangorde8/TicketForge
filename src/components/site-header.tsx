@@ -17,53 +17,68 @@ export function SiteHeader({
 }: SiteHeaderProps) {
   return (
     <header
-      className="sticky top-0 z-50 border-b backdrop-blur-md"
+      className="sticky top-0 z-50 backdrop-blur-md"
       style={{
-        borderColor: "var(--line)",
-        background: "color-mix(in srgb, var(--bg) 80%, transparent)",
+        borderBottom: "1px solid var(--ink)",
+        background: "color-mix(in srgb, var(--bg) 88%, transparent)",
       }}
     >
-      <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-7">
+      <div className="mx-auto flex h-[60px] max-w-[1320px] items-center justify-between px-7">
         <Link href="/" className="inline-flex items-center gap-2.5">
           <span
-            className="inline-flex h-7 w-7 items-center justify-center rounded-lg text-white shadow"
+            className="inline-flex h-7 w-7 items-center justify-center"
             style={{
-              background: "linear-gradient(135deg, #5e6ad2 0%, #9aa3f0 70%)",
-              boxShadow: "0 2px 6px rgba(94,106,210,0.4), inset 0 1px 0 rgba(255,255,255,0.25)",
+              border: "1.5px solid var(--ink)",
+              color: "var(--ink)",
             }}
             aria-hidden
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="m14.5 9.5 5 5" />
-              <path d="m12 8 4 4" />
-              <path d="M3 21l1.5-1.5" />
-              <path d="M5.5 17.5 17 6l1 1L6.5 18.5z" />
-            </svg>
+            <span
+              className="serif-italic"
+              style={{ fontSize: 16, lineHeight: 1, marginTop: -1 }}
+            >
+              T
+            </span>
           </span>
-          <span className="text-[15px] font-semibold tracking-tight" style={{ color: "var(--ink)" }}>
+          <span
+            className="serif-italic"
+            style={{
+              fontSize: 22,
+              letterSpacing: "-0.02em",
+              color: "var(--ink)",
+              lineHeight: 1,
+            }}
+          >
             TicketForge
           </span>
         </Link>
 
         {variant === "marketing" ? (
-          <nav className="hidden items-center gap-7 text-sm md:flex" style={{ color: "var(--muted)" }}>
-            <Link href="/how-it-works" className="hover:opacity-100 transition-opacity">
+          <nav
+            className="hidden items-center gap-7 md:flex"
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: 11,
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              color: "var(--ink)",
+            }}
+          >
+            <Link href="/how-it-works" className="hover:opacity-60">
               How it works
             </Link>
-            <Link href="/impact" className="hover:opacity-100 transition-opacity">
-              Business impact
+            <Link href="/impact" className="hover:opacity-60">
+              Impact
             </Link>
-            <Link href="/extract" className="hover:opacity-100 transition-opacity">
+            <Link href="/extract" className="hover:opacity-60">
               Try it
             </Link>
           </nav>
         ) : (
-          <nav className="hidden items-center gap-1 text-sm md:flex">
-            <StepPillV2 label="1. Paste" active={step === "paste"} />
-            <span className="tl-sep">›</span>
-            <StepPillV2 label="2. Review" active={step === "review"} />
-            <span className="tl-sep">›</span>
-            <StepPillV2 label="3. Push" active={step === "pushed"} done={step === "pushed"} />
+          <nav className="hidden items-center gap-3 md:flex">
+            <StepEdit num="01" label="Paste" active={step === "paste"} />
+            <StepEdit num="02" label="Review" active={step === "review"} />
+            <StepEdit num="03" label="Push" active={step === "pushed"} done={step === "pushed"} />
           </nav>
         )}
 
@@ -72,12 +87,20 @@ export function SiteHeader({
           {variant === "marketing" ? (
             <Link href="/extract" className="btn btn-primary magnet">
               Try it now
-              <ArrowRight className="h-3.5 w-3.5" />
+              <ArrowRight className="h-3 w-3" />
             </Link>
           ) : showAvatar ? (
             <span
-              className="avatar-pill av-AG"
-              style={{ width: 30, height: 30, fontSize: 11 }}
+              className="inline-flex items-center justify-center"
+              style={{
+                width: 32,
+                height: 32,
+                border: "1px solid var(--ink)",
+                fontFamily: "var(--font-mono)",
+                fontSize: 11,
+                fontWeight: 600,
+                color: "var(--ink)",
+              }}
               aria-label="You"
             >
               AG
@@ -89,15 +112,44 @@ export function SiteHeader({
   );
 }
 
-function StepPillV2({
+function StepEdit({
+  num,
   label,
   active,
   done,
 }: {
+  num: string;
   label: string;
   active?: boolean;
   done?: boolean;
 }) {
-  const cls = done ? "step-pill-v2 done" : active ? "step-pill-v2 active" : "step-pill-v2";
-  return <span className={cls}>{label}</span>;
+  return (
+    <span
+      className="inline-flex items-center gap-2"
+      style={{
+        fontFamily: "var(--font-mono)",
+        fontSize: 11,
+        textTransform: "uppercase",
+        letterSpacing: "0.12em",
+        color: active || done ? "var(--ink)" : "var(--muted-2)",
+      }}
+    >
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: 22,
+          height: 22,
+          border: "1px solid currentColor",
+          fontWeight: 600,
+          background: active ? "var(--ink)" : "transparent",
+          color: active ? "var(--bg)" : "currentColor",
+        }}
+      >
+        {done ? "✓" : num}
+      </span>
+      <span style={{ fontWeight: active ? 600 : 400 }}>{label}</span>
+    </span>
+  );
 }
