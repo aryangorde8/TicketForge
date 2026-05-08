@@ -59,9 +59,11 @@ export default function ReviewPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState("");
+  const [lowConfOnly, setLowConfOnly] = useState(false);
   const [pushing, setPushing] = useState(false);
   const [pushResults, setPushResults] = useState<PushResult[] | null>(null);
   const [pushError, setPushError] = useState<string | null>(null);
+  const [destination, setDestination] = useState<"linear" | "github">("linear");
 
   useEffect(() => {
     const payload = loadExtract();
@@ -90,14 +92,16 @@ export default function ReviewPage() {
   }, [items]);
 
   const filtered = useMemo(() => {
+    let base = items;
+    if (lowConfOnly) base = base.filter((it) => it.confidence < 0.85);
     const q = filter.trim().toLowerCase();
-    if (!q) return items;
-    return items.filter((it) =>
+    if (!q) return base;
+    return base.filter((it) =>
       [it.title, it.description, it.assignee_hint, it.source_quote]
         .filter(Boolean)
         .some((f) => f!.toLowerCase().includes(q))
     );
-  }, [items, filter]);
+  }, [items, filter, lowConfOnly]);
 
   if (!hydrated) {
     return (
@@ -209,12 +213,13 @@ export default function ReviewPage() {
     setPushing(true);
     setPushError(null);
     try {
-      const res = await fetch("/api/push-to-linear", {
+      const res = await fetch("/api/push", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items: data.items,
           team_id: data.default_team_id,
+          destination,
         }),
       });
       const body = await res.json();
@@ -353,6 +358,18 @@ export default function ReviewPage() {
                 ) : null}
               </div>
               <div className="flex items-center gap-2 text-sm">
+                <button
+                  type="button"
+                  onClick={() => setLowConfOnly((v) => !v)}
+                  className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium transition ${
+                    lowConfOnly
+                      ? "border-amber-200 bg-amber-50 text-amber-800"
+                      : "border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50"
+                  }`}
+                >
+                  <AlertTriangle className="h-3.5 w-3.5" />
+                  {lowConfOnly ? "Showing low-confidence only" : "Low confidence only"}
+                </button>
                 <div className="relative">
                   <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400" />
                   <Input
@@ -493,33 +510,65 @@ export default function ReviewPage() {
                   </div>
                   <div>
                     <div className="text-sm font-semibold text-zinc-900">
-                      Connected to{" "}
-                      <span className="font-mono">{teamLabel}</span>
+                      Push to{" "}
+                      {destination === "linear" ? (
+                        <span className="font-mono">{teamLabel}</span>
+                      ) : (
+                        <span className="font-mono">GitHub Issues</span>
+                      )}
                     </div>
                     <div className="text-xs text-zinc-500">
-                      Tickets created in default workflow state{" "}
-                      <span className="font-mono">Backlog</span>
+                      {destination === "linear"
+                        ? "Created in default workflow state Backlog"
+                        : "Issues created with priority/assignee labels"}
                     </div>
                   </div>
                 </div>
-                <Button
-                  onClick={handlePush}
-                  disabled={pushing || items.length === 0}
-                  className="bg-forge hover:bg-forge-hover ml-auto h-auto rounded-md px-5 py-3 text-base font-medium text-white shadow-sm"
-                >
-                  {pushing ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Pushing to Linear…
-                    </>
-                  ) : (
-                    <>
-                      <UploadCloud className="h-4 w-4" />
-                      Push {items.length} item
-                      {items.length === 1 ? "" : "s"} to Linear
-                    </>
-                  )}
-                </Button>
+                <div className="ml-auto flex items-center gap-3">
+                  <div className="inline-flex rounded-md border border-zinc-200 bg-zinc-50 p-0.5">
+                    <button
+                      type="button"
+                      onClick={() => setDestination("linear")}
+                      className={`rounded px-3 py-1.5 text-xs font-medium transition ${
+                        destination === "linear"
+                          ? "bg-white text-zinc-900 shadow-sm"
+                          : "text-zinc-500 hover:text-zinc-700"
+                      }`}
+                    >
+                      Linear
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDestination("github")}
+                      className={`rounded px-3 py-1.5 text-xs font-medium transition ${
+                        destination === "github"
+                          ? "bg-white text-zinc-900 shadow-sm"
+                          : "text-zinc-500 hover:text-zinc-700"
+                      }`}
+                    >
+                      GitHub
+                    </button>
+                  </div>
+                  <Button
+                    onClick={handlePush}
+                    disabled={pushing || items.length === 0}
+                    className="bg-forge hover:bg-forge-hover h-auto rounded-md px-5 py-3 text-base font-medium text-white shadow-sm"
+                  >
+                    {pushing ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Pushing to {destination === "linear" ? "Linear" : "GitHub"}…
+                      </>
+                    ) : (
+                      <>
+                        <UploadCloud className="h-4 w-4" />
+                        Push {items.length} item
+                        {items.length === 1 ? "" : "s"} to{" "}
+                        {destination === "linear" ? "Linear" : "GitHub"}
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
 

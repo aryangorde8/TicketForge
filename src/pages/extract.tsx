@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import {
@@ -7,9 +7,11 @@ import {
   Link as LinkIcon,
   Loader2,
   Lock,
+  Mic,
   Settings2,
   Shield,
   Sparkles,
+  Square,
   Upload,
   WandSparkles,
   Zap,
@@ -28,6 +30,12 @@ export default function ExtractPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [phase, setPhase] = useState(0);
+  const [recording, setRecording] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+  const [recordSeconds, setRecordSeconds] = useState(0);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const recordTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (router.query.sample === "1") {
@@ -45,6 +53,68 @@ export default function ExtractPage() {
       clearTimeout(t2);
     };
   }, [submitting]);
+
+  async function startRecording() {
+    setError(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+        ? "audio/webm;codecs=opus"
+        : MediaRecorder.isTypeSupported("audio/webm")
+          ? "audio/webm"
+          : "audio/mp4";
+      const mediaRecorder = new MediaRecorder(stream, { mimeType });
+      mediaRecorderRef.current = mediaRecorder;
+      chunksRef.current = [];
+      setRecordSeconds(0);
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        if (recordTimerRef.current) clearInterval(recordTimerRef.current);
+        const blob = new Blob(chunksRef.current, { type: mimeType });
+        await transcribe(blob, mimeType);
+      };
+
+      mediaRecorder.start();
+      setRecording(true);
+      recordTimerRef.current = setInterval(() => {
+        setRecordSeconds((s) => s + 1);
+      }, 1000);
+    } catch {
+      setError("Microphone access denied. Allow mic access and try again.");
+    }
+  }
+
+  function stopRecording() {
+    if (mediaRecorderRef.current && recording) {
+      mediaRecorderRef.current.stop();
+      setRecording(false);
+    }
+  }
+
+  async function transcribe(blob: Blob, mimeType: string) {
+    setTranscribing(true);
+    try {
+      const base64 = await blobToBase64(blob);
+      const res = await fetch("/api/transcribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ audio: base64, mimeType }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Transcription failed");
+      const newText = data.text as string;
+      setTranscript((prev) => (prev ? prev + "\n\n" + newText : newText));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Transcription failed");
+    } finally {
+      setTranscribing(false);
+    }
+  }
 
   async function handleExtract() {
     setError(null);
@@ -93,6 +163,36 @@ export default function ExtractPage() {
             {/* Toolbar */}
             <div className="flex h-11 items-center justify-between rounded-t-lg border-b border-zinc-200 bg-zinc-50/60 px-4">
               <div className="flex items-center gap-1">
+                {recording ? (
+                  <button
+                    type="button"
+                    onClick={stopRecording}
+                    className="inline-flex items-center gap-1.5 rounded-md bg-rose-50 px-2.5 py-1 text-xs font-medium text-rose-700 ring-1 ring-rose-200 hover:bg-rose-100"
+                  >
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-75" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-rose-500" />
+                    </span>
+                    <Square className="h-3 w-3" />
+                    Stop · {formatDuration(recordSeconds)}
+                  </button>
+                ) : transcribing ? (
+                  <span className="inline-flex items-center gap-1.5 rounded-md bg-forge-soft px-2.5 py-1 text-xs font-medium text-forge">
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                    Transcribing…
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={startRecording}
+                    disabled={submitting}
+                    className="inline-flex items-center gap-1.5 rounded-md bg-forge px-2.5 py-1 text-xs font-medium text-white hover:bg-forge-hover disabled:opacity-50"
+                  >
+                    <Mic className="h-3 w-3" />
+                    Record meeting
+                  </button>
+                )}
+                <Divider />
                 <ToolbarBtn icon={Upload} label="Upload .txt / .vtt" disabled />
                 <Divider />
                 <ToolbarBtn icon={LinkIcon} label="Paste from URL" disabled />
@@ -250,6 +350,25 @@ export default function ExtractPage() {
       </div>
     </>
   );
+}
+
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const result = reader.result as string;
+      const base64 = result.split(",")[1];
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+function formatDuration(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
 function ToolbarBtn({
