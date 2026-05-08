@@ -1,40 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# TicketForge
 
-## Getting Started
+Convert meeting transcripts into properly-structured Linear tickets in seconds.
 
-First, run the development server:
+**Live demo:** [ticketforge.aryangorde.com](https://ticketforge.aryangorde.com)
+
+## What it does
+
+Engineering managers spend 4–6 hours per week converting meeting notes into tickets. For a 20-person team, that's $130K/year in lost capacity. TicketForge fixes this:
+
+1. **Paste, upload, or record** a meeting transcript
+2. **AI extracts** action items with confidence scores, source quotes, and assignee matches
+3. **Review and edit** in a clean human-in-the-loop UI
+4. **Push to Linear, GitHub Issues, or via Slack bot**
+
+## Differentiators
+
+- **Confidence scoring** — every extraction comes with a 0–1 score so humans review what needs review, not everything
+- **Source quotes** — every ticket links back to the exact line in the transcript. No hallucinations.
+- **Smart assignee matching** — Levenshtein + first-name boost matches "marcus" to "Marcus Chen" at 88%
+- **Smart deduplication** — checks Linear for existing similar tickets before creating new ones
+- **Multi-platform output** — Linear, GitHub Issues, Slack
+- **MCP server** — exposes the pipeline as Model Context Protocol tools for Claude Desktop, Cursor
+
+## Stack
+
+- **Next.js 16** (Pages Router) + TypeScript + Tailwind CSS v4
+- **Groq** (Llama 3.3 70B + Whisper Large V3 Turbo) for extraction and transcription
+- **Zod** for structured output validation with retry
+- **Linear SDK**, GitHub REST API, Slack Web API
+- **Framer Motion** for animations
+- Hosted on AWS EC2 (t3.small) with Nginx + PM2 + Let's Encrypt SSL
+
+## Local setup
 
 ```bash
+git clone https://github.com/aryangorde8/TicketForge.git
+cd TicketForge
+npm install
+cp .env.local.example .env.local
+# Fill in GROQ_API_KEY and LINEAR_API_KEY
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Optional integrations
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+```bash
+# GitHub Issues
+GITHUB_TOKEN=ghp_...
+GITHUB_OWNER=your-org
+GITHUB_REPO=your-repo
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+# Slack bot
+SLACK_BOT_TOKEN=xoxb-...
+SLACK_SIGNING_SECRET=...
+TICKETFORGE_URL=https://your-deploy-url.com
+```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+## Slack bot setup
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Create a Slack app at [api.slack.com/apps](https://api.slack.com/apps)
+2. Add slash command `/ticketforge` pointing to `https://YOUR_URL/api/slack/command`
+3. Add interactivity URL `https://YOUR_URL/api/slack/interact`
+4. Add bot scopes: `chat:write`, `commands`
+5. Install to workspace, copy bot token + signing secret to env vars
+6. Use it: `/ticketforge <paste transcript>`
 
-## Learn More
+## MCP server
 
-To learn more about Next.js, take a look at the following resources:
+For Claude Desktop integration, add to `claude_desktop_config.json`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+```json
+{
+  "mcpServers": {
+    "ticketforge": {
+      "command": "node",
+      "args": ["/absolute/path/to/scripts/mcp-server.mjs"],
+      "env": { "TICKETFORGE_URL": "https://ticketforge.aryangorde.com" }
+    }
+  }
+}
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Tools exposed: `extract_action_items`, `push_to_linear`, `push_to_github`.
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+MIT

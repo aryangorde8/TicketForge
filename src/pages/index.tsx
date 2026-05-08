@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import {
   Hash,
   Lock,
@@ -8,7 +9,6 @@ import {
   Play,
   SquareStack,
   Video,
-  WandSparkles,
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
@@ -35,27 +35,57 @@ export default function Home() {
         <SiteHeader variant="marketing" />
 
         {/* Hero */}
-        <section className="bg-noise relative">
-          <div className="mx-auto max-w-6xl px-6 pt-20 pb-16">
-            <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs text-zinc-600 shadow-sm">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                Now with confidence-scored extraction
+        <section className="bg-noise relative overflow-hidden">
+          <div className="aurora" />
+          <div className="aurora-pink" />
+          <div className="relative z-10 mx-auto max-w-6xl px-6 pt-20 pb-16">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="max-w-3xl"
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+                className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white/80 backdrop-blur px-3 py-1 text-xs text-zinc-600 shadow-sm"
+              >
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                </span>
+                Now with voice recording &amp; MCP server
                 <span className="text-zinc-300">·</span>
-                <span className="text-forge font-medium">v0.4 shipped</span>
-              </div>
-              <h1 className="mt-5 text-5xl font-semibold leading-[1.05] tracking-tight text-zinc-900 sm:text-6xl">
+                <span className="text-forge font-medium">v0.5 shipped</span>
+              </motion.div>
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
+                className="mt-5 text-5xl font-semibold leading-[1.05] tracking-tight text-zinc-900 sm:text-6xl"
+              >
                 Turn meetings <br className="hidden sm:block" />
                 into tickets.{" "}
-                <span className="text-zinc-400">In seconds.</span>
-              </h1>
-              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-600">
+                <span className="gradient-text">In seconds.</span>
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-600"
+              >
                 TicketForge converts meeting transcripts into
                 properly-structured Linear tickets — with confidence-scored
                 action items, smart assignee matching, and human review built
                 in.
-              </p>
-              <div className="mt-8 flex flex-wrap items-center gap-3">
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.45 }}
+                className="mt-8 flex flex-wrap items-center gap-3"
+              >
                 <Link href="/extract?sample=1">
                   <Button className="bg-forge hover:bg-forge-hover text-white shadow-sm">
                     <Play className="h-4 w-4" />
@@ -71,12 +101,17 @@ export default function Home() {
                 <span className="ml-1 text-xs text-zinc-500">
                   No login required for the demo.
                 </span>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
             {/* Hero product mock */}
-            <div className="relative mt-14">
-              <div className="from-forge/10 pointer-events-none absolute -inset-4 rounded-3xl bg-gradient-to-b via-transparent to-transparent blur-2xl" />
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+              className="relative mt-14"
+            >
+              <div className="from-forge/20 pointer-events-none absolute -inset-4 rounded-3xl bg-gradient-to-b via-transparent to-transparent blur-2xl" />
               <div className="mock-shadow relative overflow-hidden rounded-xl border border-zinc-200 bg-white">
                 <div className="flex h-9 items-center gap-2 border-b border-zinc-200 bg-zinc-50 px-4">
                   <span className="h-2.5 w-2.5 rounded-full bg-zinc-300" />
@@ -89,23 +124,33 @@ export default function Home() {
                 </div>
                 <HeroMock />
               </div>
-            </div>
+            </motion.div>
 
             {/* Logo strip */}
-            <div className="mt-14 flex flex-wrap items-center gap-x-10 gap-y-3 text-xs text-zinc-500">
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+              className="mt-14 flex flex-wrap items-center gap-x-10 gap-y-3 text-xs text-zinc-500"
+            >
               <span className="uppercase tracking-wider">
                 Built for teams using
               </span>
-              {LOGOS.map((l) => (
-                <div
+              {LOGOS.map((l, i) => (
+                <motion.div
                   key={l.label}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.06 }}
                   className="flex items-center gap-2 font-semibold text-zinc-700"
                 >
                   <l.icon className="h-4 w-4" />
                   {l.label}
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </section>
 
