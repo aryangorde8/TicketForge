@@ -1,125 +1,148 @@
 import Link from "next/link";
-import { ArrowRight, Gauge, Play, ShieldCheck, UserSearch } from "lucide-react";
+import { ArrowRight, Gauge, Play, Search, ShieldCheck } from "lucide-react";
+import { Atmosphere, useMagnet, useReveal } from "@/components/atmosphere";
 import { Meta } from "@/components/meta";
 import { SiteHeader } from "@/components/site-header";
-import { Button } from "@/components/ui/button";
-
-const FEATURES = [
-  {
-    n: "01",
-    icon: Gauge,
-    title: "Extract with confidence",
-    body: "Confidence-scored items, with the source quote attached to every extraction.",
-    foot: (
-      <>
-        <span className="rounded bg-emerald-50 px-1.5 py-0.5 font-medium text-emerald-700">
-          0.94
-        </span>
-        <span className="truncate italic text-zinc-500">
-          &ldquo;Aryan, take Stripe — it&apos;s blocking checkout.&rdquo;
-        </span>
-      </>
-    ),
-  },
-  {
-    n: "02",
-    icon: UserSearch,
-    title: "Smart assignee matching",
-    body: "Fuzzy-matches transcript names — first names, nicknames, typos — to your Linear team.",
-    foot: (
-      <>
-        <span className="font-mono text-zinc-500">&ldquo;marcus&rdquo;</span>
-        <ArrowRight className="h-3 w-3 text-zinc-400" />
-        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-sky-200 text-[9px] font-medium text-sky-900">
-          MC
-        </span>
-        <span className="text-zinc-700">Marcus Chen</span>
-        <span className="ml-auto font-medium text-emerald-700">88%</span>
-      </>
-    ),
-  },
-  {
-    n: "03",
-    icon: ShieldCheck,
-    title: "Review before push",
-    body: "Bulk actions, inline edits, source-of-truth quotes. No surprises in your board.",
-    foot: (
-      <>
-        <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-zinc-700">
-          Bulk priority
-        </span>
-        <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-zinc-700">
-          Reassign
-        </span>
-        <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-zinc-700">
-          Skip
-        </span>
-      </>
-    ),
-  },
-];
 
 export default function HowItWorksPage() {
+  useReveal();
+  useMagnet();
+
   return (
     <>
-      <Meta title="How it works" path="/how-it-works" description="A 4-step pipeline: paste/record transcript → confidence-scored extraction → human review → push to Linear, GitHub, or Slack. Built on Llama 3.3 70B and Whisper via Groq." />
-      <div className="min-h-screen bg-white text-zinc-900">
-        <SiteHeader variant="marketing" />
+      <Meta
+        title="How it works"
+        path="/how-it-works"
+        description="A 4-step pipeline: paste/record transcript → confidence-scored extraction → human review → push to Linear, GitHub, Notion, or Slack."
+      />
+      <SiteHeader variant="marketing" />
 
-        <main className="mx-auto max-w-6xl px-6 py-20">
-          <div className="max-w-2xl">
-            <div className="text-forge text-xs font-semibold uppercase tracking-wider">
-              How it works
-            </div>
-            <h1 className="mt-3 text-4xl font-semibold tracking-tight">
-              A pipeline you can actually trust.
+      <div style={{ position: "relative", padding: "96px 0" }}>
+        <Atmosphere opacity={0.35} style={{ height: 360, top: 0 }} />
+        <div className="relative z-[2] mx-auto max-w-[1200px] px-7">
+          <div className="reveal" style={{ maxWidth: 720 }}>
+            <div className="eyebrow">How it works</div>
+            <h1 className="display display-lg" style={{ marginTop: 14 }}>
+              A pipeline you can actually{" "}
+              <span className="serif-italic" style={{ color: "var(--ink)", letterSpacing: "-0.02em" }}>
+                trust
+              </span>
+              .
             </h1>
-            <p className="mt-4 leading-relaxed text-zinc-600">
-              Three stages, one file of context. Each step shows its work so
-              you never have to guess what the model heard.
+            <p className="lede" style={{ marginTop: 16 }}>
+              Three stages, one source of truth. Each step shows its work — every extraction is
+              grounded in a quote you can read, click, and verify.
             </p>
           </div>
 
-          <div className="mt-14 grid gap-5 md:grid-cols-3">
-            {FEATURES.map((f) => (
-              <div
-                key={f.n}
-                className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="bg-forge-soft text-forge flex h-9 w-9 items-center justify-center rounded-md">
-                    <f.icon className="h-5 w-5" />
-                  </div>
-                  <span className="font-mono text-[11px] text-zinc-400">
-                    {f.n}
+          <div
+            className="reveal"
+            style={{
+              marginTop: 56,
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: 16,
+            }}
+          >
+            <Card
+              n="01"
+              icon={<Gauge className="h-5 w-5" />}
+              title="Extract with confidence"
+              body="Confidence-scored items with the source quote attached to every extraction."
+              foot={
+                <>
+                  <span className="conf conf-hi">0.94</span>
+                  <span className="serif-italic truncate text-sm" style={{ color: "var(--muted)" }}>
+                    &ldquo;Aryan, take Stripe — it&apos;s blocking checkout.&rdquo;
                   </span>
-                </div>
-                <h3 className="mt-5 text-base font-semibold tracking-tight">
-                  {f.title}
-                </h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-zinc-600">
-                  {f.body}
-                </p>
-                <div className="mt-5 flex items-center gap-2 border-t border-zinc-100 pt-5 text-[11px]">
-                  {f.foot}
-                </div>
-              </div>
-            ))}
+                </>
+              }
+            />
+            <Card
+              n="02"
+              icon={<Search className="h-5 w-5" />}
+              title="Smart assignee matching"
+              body="Fuzzy-matches transcript names — first names, nicknames, typos — to your Linear team."
+              foot={
+                <>
+                  <span className="mono text-xs" style={{ color: "var(--muted)" }}>&ldquo;marcus&rdquo;</span>
+                  <ArrowRight className="h-3 w-3" style={{ color: "var(--muted-2)" }} />
+                  <span className="avatar-pill av-MC">MC</span>
+                  <span style={{ color: "var(--ink-2)" }}>Marcus Chen</span>
+                  <span className="ml-auto font-semibold" style={{ color: "#047857" }}>88%</span>
+                </>
+              }
+            />
+            <Card
+              n="03"
+              icon={<ShieldCheck className="h-5 w-5" />}
+              title="Review before push"
+              body="Bulk actions, inline edits, source-of-truth quotes. No surprises in your board."
+              foot={
+                <>
+                  <span className="pill p-low">Bulk priority</span>
+                  <span className="pill p-low">Reassign</span>
+                  <span className="pill p-low">Skip</span>
+                </>
+              }
+            />
           </div>
 
-          <div className="mt-14 flex items-center gap-3">
-            <Link href="/extract?sample=1">
-              <Button className="bg-forge hover:bg-forge-hover text-white shadow-sm">
-                <Play className="h-4 w-4" />
-                Try with sample transcript
-              </Button>
+          <div className="reveal mt-14 flex flex-wrap items-center gap-3">
+            <Link href="/extract?sample=1" className="btn btn-primary magnet">
+              <Play className="h-3.5 w-3.5 fill-current" />
+              Try with sample transcript
             </Link>
-            <Link href="/impact" className="text-sm text-zinc-500 hover:text-zinc-900">
+            <Link
+              href="/impact"
+              className="text-sm hover:opacity-100"
+              style={{ color: "var(--muted)" }}
+            >
               See business impact →
             </Link>
           </div>
-        </main>
+        </div>
       </div>
     </>
+  );
+}
+
+function Card({
+  n,
+  icon,
+  title,
+  body,
+  foot,
+}: {
+  n: string;
+  icon: React.ReactNode;
+  title: string;
+  body: string;
+  foot: React.ReactNode;
+}) {
+  return (
+    <div className="surface-card card-tilt tiltable" style={{ padding: 28 }}>
+      <div className="flex items-center justify-between">
+        <div
+          className="flex h-10 w-10 items-center justify-center rounded-[10px]"
+          style={{ background: "var(--forge-soft)", color: "var(--forge)" }}
+        >
+          {icon}
+        </div>
+        <span className="mono text-xs" style={{ color: "var(--muted-2)" }}>{n}</span>
+      </div>
+      <h3 className="mt-[22px] text-[17px] font-semibold tracking-tight" style={{ color: "var(--ink)" }}>
+        {title}
+      </h3>
+      <p className="body-text mt-1.5" style={{ fontSize: 14 }}>
+        {body}
+      </p>
+      <div
+        className="mt-[22px] flex items-center gap-2 pt-[18px] text-xs"
+        style={{ borderTop: "1px solid var(--line)" }}
+      >
+        {foot}
+      </div>
+    </div>
   );
 }

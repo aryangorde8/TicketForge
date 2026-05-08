@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { ArrowRight, LifeBuoy, WandSparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export type StepKey = "paste" | "review" | "pushed" | null;
 
@@ -16,87 +16,80 @@ export function SiteHeader({
   showAvatar = false,
 }: SiteHeaderProps) {
   return (
-    <header className="sticky top-0 z-30 border-b border-zinc-200 bg-white/80 backdrop-blur-sm">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        <Link href="/" className="flex items-center gap-2.5">
-          <span className="relative inline-flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-[#5E6AD2] to-[#7B86E0] text-white">
-            <WandSparkles className="h-4 w-4" />
+    <header
+      className="sticky top-0 z-50 border-b backdrop-blur-md"
+      style={{
+        borderColor: "var(--line)",
+        background: "color-mix(in srgb, var(--bg) 80%, transparent)",
+      }}
+    >
+      <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-7">
+        <Link href="/" className="inline-flex items-center gap-2.5">
+          <span
+            className="inline-flex h-7 w-7 items-center justify-center rounded-lg text-white shadow"
+            style={{
+              background: "linear-gradient(135deg, #5e6ad2 0%, #9aa3f0 70%)",
+              boxShadow: "0 2px 6px rgba(94,106,210,0.4), inset 0 1px 0 rgba(255,255,255,0.25)",
+            }}
+            aria-hidden
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m14.5 9.5 5 5" />
+              <path d="m12 8 4 4" />
+              <path d="M3 21l1.5-1.5" />
+              <path d="M5.5 17.5 17 6l1 1L6.5 18.5z" />
+            </svg>
           </span>
-          <span className="text-[15px] font-semibold tracking-tight text-zinc-900">
+          <span className="text-[15px] font-semibold tracking-tight" style={{ color: "var(--ink)" }}>
             TicketForge
           </span>
         </Link>
 
         {variant === "marketing" ? (
-          <nav className="hidden items-center gap-7 text-sm text-zinc-600 md:flex">
-            <Link href="/how-it-works" className="hover:text-zinc-900">
+          <nav className="hidden items-center gap-7 text-sm md:flex" style={{ color: "var(--muted)" }}>
+            <Link href="/how-it-works" className="hover:opacity-100 transition-opacity">
               How it works
             </Link>
-            <Link href="/impact" className="hover:text-zinc-900">
+            <Link href="/impact" className="hover:opacity-100 transition-opacity">
               Business impact
             </Link>
-            <a
-              href="https://linear.app"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-zinc-900"
-            >
-              Linear
-            </a>
+            <Link href="/extract" className="hover:opacity-100 transition-opacity">
+              Try it
+            </Link>
           </nav>
         ) : (
-          <nav className="hidden items-center gap-1 text-sm text-zinc-500 md:flex">
-            <StepPill label="1. Paste" active={step === "paste"} />
-            <ChevronSep />
-            <StepPill label="2. Review" active={step === "review"} />
-            <ChevronSep />
-            <StepPill
-              label="3. Push"
-              active={step === "pushed"}
-              done={step === "pushed"}
-            />
+          <nav className="hidden items-center gap-1 text-sm md:flex">
+            <StepPillV2 label="1. Paste" active={step === "paste"} />
+            <span className="tl-sep">›</span>
+            <StepPillV2 label="2. Review" active={step === "review"} />
+            <span className="tl-sep">›</span>
+            <StepPillV2 label="3. Push" active={step === "pushed"} done={step === "pushed"} />
           </nav>
         )}
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           {variant === "marketing" ? (
-            <>
-              <Link
-                href="/extract"
-                className="hidden rounded-md px-3 py-1.5 text-sm text-zinc-700 hover:text-zinc-900 sm:inline-flex"
-              >
-                Sign in
-              </Link>
-              <Link href="/extract">
-                <Button className="bg-forge hover:bg-forge-hover text-white">
-                  Try it now
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-            </>
-          ) : (
-            <>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-zinc-700 hover:text-zinc-900"
-              >
-                <LifeBuoy className="h-4 w-4" /> Help
-              </Button>
-              {showAvatar ? (
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-amber-200 to-amber-300 text-xs font-medium text-amber-900 ring-2 ring-white">
-                  YOU
-                </div>
-              ) : null}
-            </>
-          )}
+            <Link href="/extract" className="btn btn-primary magnet">
+              Try it now
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          ) : showAvatar ? (
+            <span
+              className="avatar-pill av-AG"
+              style={{ width: 30, height: 30, fontSize: 11 }}
+              aria-label="You"
+            >
+              AG
+            </span>
+          ) : null}
         </div>
       </div>
     </header>
   );
 }
 
-function StepPill({
+function StepPillV2({
   label,
   active,
   done,
@@ -105,13 +98,6 @@ function StepPill({
   active?: boolean;
   done?: boolean;
 }) {
-  let cls = "text-zinc-500";
-  if (done)
-    cls = "bg-emerald-50 text-emerald-700 font-medium inline-flex items-center gap-1.5";
-  else if (active) cls = "bg-zinc-100 text-zinc-900 font-medium";
-  return <span className={`rounded-md px-2.5 py-1 ${cls}`}>{label}</span>;
-}
-
-function ChevronSep() {
-  return <span className="text-zinc-300">›</span>;
+  const cls = done ? "step-pill-v2 done" : active ? "step-pill-v2 active" : "step-pill-v2";
+  return <span className={cls}>{label}</span>;
 }

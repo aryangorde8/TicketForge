@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import { Atmosphere, useMagnet, useReveal } from "@/components/atmosphere";
 import { Meta } from "@/components/meta";
 import {
   AlertTriangle,
@@ -69,6 +70,10 @@ export default function ReviewPage() {
   const [stalled, setStalled] = useState<StalledIssue[] | null>(null);
   const [stalledLoading, setStalledLoading] = useState(false);
   const [stalledDismissed, setStalledDismissed] = useState(false);
+  const pushBtnRef = useRef<HTMLButtonElement | null>(null);
+
+  useReveal();
+  useMagnet();
 
   useEffect(() => {
     const payload = loadExtract();
@@ -138,36 +143,36 @@ export default function ReviewPage() {
 
   if (!hydrated) {
     return (
-      <div className="min-h-screen bg-white">
+      <>
         <SiteHeader variant="app" step="review" showAvatar />
-        <div className="mx-auto max-w-6xl px-6 py-12 text-sm text-zinc-500">
+        <div className="mx-auto max-w-6xl px-7 py-12 text-sm" style={{ color: "var(--muted)" }}>
           Loading…
         </div>
-      </div>
+      </>
     );
   }
 
   if (!data || items.length === 0 && !data.meeting_summary) {
     return (
-      <div className="min-h-screen bg-white">
+      <>
         <SiteHeader variant="app" step="review" showAvatar />
-        <main className="mx-auto max-w-2xl px-6 py-20 text-center">
-          <h1 className="text-xl font-semibold text-zinc-900">
-            Nothing to review yet
+        <main className="mx-auto max-w-2xl px-7 py-20 text-center">
+          <h1 className="display display-md">
+            Nothing to <span className="serif-italic" style={{ color: "var(--ink)" }}>review</span> yet
           </h1>
-          <p className="mt-2 text-sm text-zinc-600">
+          <p className="mt-2 text-sm" style={{ color: "var(--muted)" }}>
             Paste a transcript on the extract page to get started.
           </p>
           <div className="mt-6">
-            <Button
+            <button
               onClick={() => router.push("/extract")}
-              className="bg-forge hover:bg-forge-hover text-white"
+              className="btn btn-primary magnet"
             >
               <ArrowLeft className="h-4 w-4" /> Go to extract
-            </Button>
+            </button>
           </div>
         </main>
-      </div>
+      </>
     );
   }
 
@@ -243,6 +248,7 @@ export default function ReviewPage() {
 
   async function handlePush() {
     if (!data) return;
+    burstParticles(pushBtnRef.current);
     setPushing(true);
     setPushError(null);
     try {
@@ -291,14 +297,15 @@ export default function ReviewPage() {
   return (
     <>
       <Meta title="Review" path="/review" />
-      <div className="min-h-screen bg-white text-zinc-900">
-        <SiteHeader variant="app" step="review" showAvatar />
+      <SiteHeader variant="app" step="review" showAvatar />
 
-        <main className="mx-auto max-w-6xl px-6 py-12">
+      <div style={{ position: "relative", padding: "64px 0 120px" }}>
+        <Atmosphere opacity={0.3} style={{ height: 320, top: 0 }} />
+        <main className="relative z-[2] mx-auto max-w-[1200px] px-7">
           {/* Page header */}
-          <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="flex flex-wrap items-end justify-between gap-4 reveal">
             <div>
-              <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-zinc-500">
+              <div className="eyebrow flex items-center gap-2">
                 <Calendar className="h-3.5 w-3.5" /> Meeting transcript ·{" "}
                 {new Date().toLocaleDateString(undefined, {
                   weekday: "short",
@@ -306,25 +313,27 @@ export default function ReviewPage() {
                   day: "numeric",
                 })}
               </div>
-              <h1 className="mt-1.5 text-3xl font-semibold tracking-tight">
-                Review &amp; edit before pushing
+              <h1 className="display display-lg" style={{ marginTop: 12 }}>
+                Review &amp;{" "}
+                <span className="serif-italic" style={{ color: "var(--ink)" }}>
+                  edit
+                </span>{" "}
+                before pushing.
               </h1>
             </div>
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                className="bg-white text-zinc-900 border-zinc-200 hover:bg-zinc-50 hover:text-zinc-900"
+              <button
                 onClick={() => router.push("/extract")}
+                className="btn btn-secondary magnet"
               >
                 <ArrowLeft className="h-4 w-4" /> Back to transcript
-              </Button>
-              <Button
-                variant="outline"
-                className="bg-white text-zinc-900 border-zinc-200 hover:bg-zinc-50 hover:text-zinc-900"
+              </button>
+              <button
                 onClick={() => router.push("/extract")}
+                className="btn btn-secondary magnet"
               >
                 <RotateCcw className="h-4 w-4" /> Re-extract
-              </Button>
+              </button>
             </div>
           </div>
 
@@ -607,10 +616,11 @@ export default function ReviewPage() {
                       Notion
                     </button>
                   </div>
-                  <Button
+                  <button
+                    ref={pushBtnRef}
                     onClick={handlePush}
                     disabled={pushing || items.length === 0}
-                    className="bg-forge hover:bg-forge-hover h-auto rounded-md px-5 py-3 text-base font-medium text-white shadow-sm"
+                    className="btn btn-primary btn-lg magnet"
                   >
                     {pushing ? (
                       <>
@@ -623,9 +633,10 @@ export default function ReviewPage() {
                         Push {items.length} item
                         {items.length === 1 ? "" : "s"} to{" "}
                         {destinationLabel(destination)}
+                        <span className="kbd">⇧⌘P</span>
                       </>
                     )}
-                  </Button>
+                  </button>
                 </div>
               </div>
             </div>
@@ -642,6 +653,30 @@ export default function ReviewPage() {
       </div>
     </>
   );
+}
+
+function burstParticles(target: HTMLElement | null) {
+  if (!target) return;
+  if (typeof window === "undefined") return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const r = target.getBoundingClientRect();
+  const cx = r.left + r.width / 2;
+  const cy = r.top + r.height / 2;
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    const angle = (Math.PI * 2 * i) / 18;
+    const dist = 60 + Math.random() * 40;
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist;
+    p.style.left = cx + "px";
+    p.style.top = cy + "px";
+    p.style.setProperty("--dx", `calc(-50% + ${dx}px)`);
+    p.style.setProperty("--dy", `calc(-50% + ${dy}px)`);
+    p.style.background = ["#5E6AD2", "#F4A4C0", "#7CD7E8"][i % 3];
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 800);
+  }
 }
 
 function ImpactStrip({
@@ -1013,23 +1048,52 @@ function SuccessScreen({
   return (
     <>
       <Meta title="Pushed" path="/review" />
-      <div className="min-h-screen bg-gradient-to-b from-white to-zinc-50">
-        <SiteHeader variant="app" step="pushed" showAvatar />
+      <SiteHeader variant="app" step="pushed" showAvatar />
 
-        <main className="mx-auto max-w-6xl px-6 py-20">
-          <div className="mx-auto max-w-2xl">
-            <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
-              <div className="from-forge-soft/60 border-b border-zinc-100 bg-gradient-to-b to-white px-8 pt-10 pb-6 text-center">
-                <div className="border-forge/20 mx-auto flex h-14 w-14 items-center justify-center rounded-full border bg-white shadow-sm">
-                  <div className="bg-forge flex h-10 w-10 items-center justify-center rounded-full text-white">
+      <div style={{ position: "relative", padding: "96px 0 120px" }}>
+        <Atmosphere opacity={0.35} />
+        <main className="relative z-[2] mx-auto max-w-[1200px] px-7">
+          <div className="mx-auto" style={{ maxWidth: 640 }}>
+            <div className="surface-card overflow-hidden" style={{ boxShadow: "var(--shadow-3)" }}>
+              <div
+                className="text-center"
+                style={{
+                  padding: "56px 32px 32px",
+                  background: "linear-gradient(180deg, var(--forge-soft), transparent)",
+                  borderBottom: "1px solid var(--line)",
+                }}
+              >
+                <div
+                  className="mx-auto inline-flex items-center justify-center"
+                  style={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: "50%",
+                    background: "var(--bg-elev)",
+                    border: "1px solid var(--forge-ring)",
+                    boxShadow: "var(--shadow-glow)",
+                  }}
+                >
+                  <div
+                    className="flex items-center justify-center text-white"
+                    style={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: "50%",
+                      background: "var(--forge)",
+                    }}
+                  >
                     <Check className="h-6 w-6" />
                   </div>
                 </div>
-                <h1 className="mt-5 text-2xl font-semibold tracking-tight">
-                  {results.length} ticket{results.length === 1 ? "" : "s"}{" "}
-                  created in {destLabel}
+                <h1 className="display display-md" style={{ marginTop: 24 }}>
+                  {results.length} ticket{results.length === 1 ? "" : "s"} created in{" "}
+                  <span className="serif-italic" style={{ color: "var(--ink)" }}>
+                    {destLabel}
+                  </span>
+                  .
                 </h1>
-                <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-zinc-600">
+                <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
                   {subCopy}
                 </p>
               </div>
@@ -1073,27 +1137,37 @@ function SuccessScreen({
                 </div>
               ) : null}
 
-              <div className="flex flex-wrap items-center justify-center gap-3 border-t border-zinc-100 px-6 py-5">
+              <div
+                className="flex flex-wrap items-center justify-center gap-3 px-6 py-5"
+                style={{ borderTop: "1px solid var(--line)" }}
+              >
                 {results[0] ? (
                   <a
                     href={results[0].url}
                     target="_blank"
                     rel="noreferrer"
-                    className="bg-forge hover:bg-forge-hover inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium text-white shadow-sm"
+                    className="btn btn-primary magnet"
                   >
                     <ExternalLink className="h-4 w-4" />
-                    Open in Linear
+                    Open in {destLabel}
                   </a>
                 ) : null}
-                <Button variant="outline" className="bg-white text-zinc-900 border-zinc-200 hover:bg-zinc-50 hover:text-zinc-900" onClick={onReset}>
+                <button onClick={onReset} className="btn btn-secondary magnet">
                   <RotateCcw className="h-4 w-4" />
                   Process another transcript
-                </Button>
+                </button>
               </div>
 
-              <div className="border-t border-zinc-100 bg-zinc-50 px-6 py-3 text-center text-xs text-zinc-600">
+              <div
+                className="px-6 py-3 text-center text-xs"
+                style={{
+                  borderTop: "1px solid var(--line)",
+                  background: "var(--bg-quiet)",
+                  color: "var(--muted)",
+                }}
+              >
                 Time saved vs. manual:{" "}
-                <span className="font-medium text-zinc-900">
+                <span className="font-medium" style={{ color: "var(--ink)" }}>
                   ~{minutesSaved} minutes
                 </span>{" "}
                 · You&apos;re welcome.
