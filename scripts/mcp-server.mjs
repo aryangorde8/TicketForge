@@ -74,6 +74,18 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         required: ["items"],
       },
     },
+    {
+      name: "push_to_notion",
+      description:
+        "Create Notion database pages from a list of action items. Database configured server-side via NOTION_TOKEN and NOTION_DATABASE_ID env vars.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          items: { type: "array", description: "Action items to push." },
+        },
+        required: ["items"],
+      },
+    },
   ],
 }));
 
@@ -93,8 +105,17 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
     };
   }
 
-  if (name === "push_to_linear" || name === "push_to_github") {
-    const destination = name === "push_to_linear" ? "linear" : "github";
+  if (
+    name === "push_to_linear" ||
+    name === "push_to_github" ||
+    name === "push_to_notion"
+  ) {
+    const destination =
+      name === "push_to_linear"
+        ? "linear"
+        : name === "push_to_github"
+          ? "github"
+          : "notion";
     const res = await fetch(`${BASE_URL}/api/push`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

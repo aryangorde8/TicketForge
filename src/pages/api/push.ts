@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createIssues, getWorkspace } from "@/lib/linear";
 import { createGitHubIssues } from "@/lib/github";
+import { createNotionPages } from "@/lib/notion";
 import type { ReviewItem, PushResult } from "@/lib/types";
 
 interface PushApiResponse {
@@ -16,7 +17,7 @@ export const config = {
   maxDuration: 60,
 };
 
-type Destination = "linear" | "github";
+type Destination = "linear" | "github" | "notion";
 
 export default async function handler(
   req: NextApiRequest,
@@ -38,6 +39,11 @@ export default async function handler(
   try {
     if (destination === "github") {
       const created = await createGitHubIssues(items);
+      return res.status(200).json({ created, destination });
+    }
+
+    if (destination === "notion") {
+      const created = await createNotionPages(items);
       return res.status(200).json({ created, destination });
     }
 

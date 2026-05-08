@@ -1,0 +1,108 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f4f5fb"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5e6ad2"/>
+      <stop offset="50%" stop-color="#a5b4fc"/>
+      <stop offset="100%" stop-color="#f0abfc"/>
+    </linearGradient>
+    <linearGradient id="logoBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5e6ad2"/>
+      <stop offset="100%" stop-color="#7b86e0"/>
+    </linearGradient>
+    <radialGradient id="aurora1" cx="20%" cy="20%" r="40%">
+      <stop offset="0%" stop-color="#5e6ad2" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#5e6ad2" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="aurora2" cx="85%" cy="15%" r="35%">
+      <stop offset="0%" stop-color="#f0abfc" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#f0abfc" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#aurora1)"/>
+  <rect width="1200" height="630" fill="url(#aurora2)"/>
+
+  <!-- Logo + brand -->
+  <g transform="translate(80, 80)">
+    <rect x="0" y="0" width="48" height="48" rx="10" fill="url(#logoBg)"/>
+    <path d="M 14 24 L 22 16 L 22 22 L 34 22 L 26 30 L 26 24 L 14 24 Z" fill="white" transform="translate(0, 2)"/>
+    <text x="62" y="32" font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="22" fill="#18181b">TicketForge</text>
+  </g>
+
+  <!-- Headline -->
+  <g transform="translate(80, 200)">
+    <text font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="76" fill="#18181b" letter-spacing="-2">
+      <tspan x="0" y="0">Turn meetings</tspan>
+      <tspan x="0" y="84">into tickets.</tspan>
+    </text>
+    <text x="0" y="168" font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="76" fill="url(#brand)" letter-spacing="-2">In seconds.</text>
+  </g>
+
+  <!-- Sub copy -->
+  <text x="80" y="500" font-family="Inter, system-ui, sans-serif" font-weight="400" font-size="22" fill="#52525b">Voice → AI extraction → Linear, GitHub, Slack — with confidence scores</text>
+
+  <!-- Status pill -->
+  <g transform="translate(80, 540)">
+    <rect width="290" height="36" rx="18" fill="white" stroke="#e4e4e7" stroke-width="1" filter="url(#shadow)"/>
+    <circle cx="20" cy="18" r="4" fill="#10b981"/>
+    <text x="34" y="23" font-family="Inter, system-ui, sans-serif" font-weight="500" font-size="13" fill="#3f3f46">Live · ticketforge.aryangorde.com</text>
+  </g>
+
+  <!-- Decorative ticket card on right -->
+  <g transform="translate(720, 130)" filter="url(#shadow)">
+    <rect width="400" height="370" rx="14" fill="white" stroke="#e4e4e7"/>
+
+    <!-- Card header -->
+    <rect width="400" height="44" rx="14" fill="#fafafa"/>
+    <rect width="400" height="32" y="12" fill="#fafafa"/>
+    <rect width="400" height="1" y="44" fill="#e4e4e7"/>
+    <circle cx="20" cy="22" r="4" fill="#d4d4d8"/>
+    <circle cx="36" cy="22" r="4" fill="#d4d4d8"/>
+    <circle cx="52" cy="22" r="4" fill="#d4d4d8"/>
+    <text x="78" y="27" font-family="JetBrains Mono, monospace" font-size="11" fill="#71717a">ticketforge.app/review</text>
+
+    <!-- Items -->
+    <g transform="translate(20, 70)">
+      <text font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="14" fill="#18181b">Action items</text>
+      <text y="20" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#71717a">Reviewed · ready to push</text>
+    </g>
+
+    <!-- Row 1 -->
+    <g transform="translate(20, 130)">
+      <rect width="360" height="60" rx="8" fill="#fafafa" stroke="#e4e4e7"/>
+      <rect x="0" y="0" width="3" height="60" rx="2" fill="#ef4444"/>
+      <text x="16" y="22" font-family="Inter, system-ui, sans-serif" font-weight="500" font-size="13" fill="#18181b">Investigate Stripe gateway timeout</text>
+      <circle cx="22" cy="42" r="8" fill="#fde68a"/>
+      <text x="22" y="46" font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="9" fill="#92400e" text-anchor="middle">AG</text>
+      <text x="38" y="46" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#52525b">Aryan</text>
+      <rect x="290" y="36" width="56" height="18" rx="4" fill="#dcfce7"/>
+      <text x="318" y="48" font-family="Inter, system-ui, sans-serif" font-weight="500" font-size="10" fill="#166534" text-anchor="middle">0.94</text>
+    </g>
+
+    <!-- Row 2 -->
+    <g transform="translate(20, 200)">
+      <rect width="360" height="60" rx="8" fill="#fafafa" stroke="#e4e4e7"/>
+      <rect x="0" y="0" width="3" height="60" rx="2" fill="#f97316"/>
+      <text x="16" y="22" font-family="Inter, system-ui, sans-serif" font-weight="500" font-size="13" fill="#18181b">Migrate auth service to OAuth2</text>
+      <circle cx="22" cy="42" r="8" fill="#bae6fd"/>
+      <text x="22" y="46" font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="9" fill="#075985" text-anchor="middle">MC</text>
+      <text x="38" y="46" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#52525b">Marcus</text>
+      <rect x="290" y="36" width="56" height="18" rx="4" fill="#dcfce7"/>
+      <text x="318" y="48" font-family="Inter, system-ui, sans-serif" font-weight="500" font-size="10" fill="#166534" text-anchor="middle">0.91</text>
+    </g>
+
+    <!-- Push button -->
+    <g transform="translate(230, 290)">
+      <rect width="150" height="36" rx="8" fill="#5e6ad2"/>
+      <text x="75" y="23" font-family="Inter, system-ui, sans-serif" font-weight="500" font-size="13" fill="white" text-anchor="middle">Push to Linear</text>
+    </g>
+  </g>
+</svg>

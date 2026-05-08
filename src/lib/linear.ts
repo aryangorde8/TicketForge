@@ -6,6 +6,7 @@ import type {
   ReviewItem,
   PushResult,
   Priority,
+  StalledIssue,
 } from "./types";
 
 let cachedClient: LinearClient | null = null;
@@ -85,6 +86,55 @@ function parseDueDate(hint: string | null): string | undefined {
   const iso = hint.match(/^(\d{4}-\d{2}-\d{2})/);
   if (iso) return iso[1];
   return undefined;
+}
+
+export async function getStalledIssues(options?: {
+  assigneeIds?: string[];
+  staleDays?: number;
+  limit?: number;
+}): Promise<StalledIssue[]> {
+  const client = getClient();
+  const staleDays = options?.staleDays ?? 7;
+  const limit = options?.limit ?? 25;
+  const cutoff = new Date(Date.now() - staleDays * 24 * 60 * 60 * 1000);
+
+  const filter: Record<string, unknown> = {
+    state: { type: { in: ["unstarted", "started"] } },
+    updatedAt: { lt: cutoff.toISOString() },
+  };
+  if (options?.assigneeIds && options.assigneeIds.length > 0) {
+    filter.assignee = { id: { in: options.assigneeIds } };
+  }
+
+  const conn = await client.issues({
+    filter,
+    first: limit,
+    orderBy: "updatedAt" as never,
+  });
+
+  const out: StalledIssue[] = [];
+  for (const issue of conn.nodes) {
+    const [state, assignee] = await Promise.all([issue.state, issue.assignee]);
+    const updated = new Date(issue.updatedAt);
+    out.push({
+      id: issue.id,
+      identifier: issue.identifier,
+      title: issue.title,
+      url: issue.url,
+      state: state?.name ?? "Unknown",
+      stateType: state?.type ?? "unstarted",
+      priority: issue.priority,
+      assigneeName: assignee?.name ?? null,
+      assigneeId: assignee?.id ?? null,
+      createdAt: issue.createdAt.toString(),
+      updatedAt: issue.updatedAt.toString(),
+      daysSinceUpdate: Math.floor(
+        (Date.now() - updated.getTime()) / (24 * 60 * 60 * 1000)
+      ),
+    });
+  }
+
+  return out;
 }
 
 export async function createIssues(

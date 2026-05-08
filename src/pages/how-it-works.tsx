@@ -1,6 +1,6 @@
-import Head from "next/head";
 import Link from "next/link";
 import { ArrowRight, Gauge, Play, ShieldCheck, UserSearch } from "lucide-react";
+import { Meta } from "@/components/meta";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 
@@ -62,9 +62,7 @@ const FEATURES = [
 export default function HowItWorksPage() {
   return (
     <>
-      <Head>
-        <title>How it works — TicketForge</title>
-      </Head>
+      <Meta title="How it works" path="/how-it-works" description="A 4-step pipeline: paste/record transcript → confidence-scored extraction → human review → push to Linear, GitHub, or Slack. Built on Llama 3.3 70B and Whisper via Groq." />
       <div className="min-h-screen bg-white text-zinc-900">
         <SiteHeader variant="marketing" />
 

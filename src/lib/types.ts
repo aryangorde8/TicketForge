@@ -52,3 +52,18 @@ export interface PushResult {
   title: string;
   identifier: string;
 }
+
+export interface StalledIssue {
+  id: string;
+  identifier: string;
+  title: string;
+  url: string;
+  state: string;
+  stateType: string;
+  priority: number;
+  assigneeName: string | null;
+  assigneeId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  daysSinceUpdate: number;
+}

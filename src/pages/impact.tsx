@@ -1,15 +1,13 @@
-import Head from "next/head";
 import Link from "next/link";
 import { Play } from "lucide-react";
+import { Meta } from "@/components/meta";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 
 export default function ImpactPage() {
   return (
     <>
-      <Head>
-        <title>Business impact — TicketForge</title>
-      </Head>
+      <Meta title="Business impact" path="/impact" description="Engineering managers spend 4–6 hours per week converting meeting notes into tickets. For a 20-person team, that's $130K/year in lost capacity. TicketForge fixes that." />
       <div className="min-h-screen bg-white text-zinc-900">
         <SiteHeader variant="marketing" />
 

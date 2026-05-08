@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
-import Head from "next/head";
+import { Meta } from "@/components/meta";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -9,9 +9,11 @@ import {
   CheckSquare,
   ChevronDown,
   ChevronRight,
+  Clock,
   ExternalLink,
   FileText,
   Flag,
+  History,
   Loader2,
   Quote,
   RotateCcw,
@@ -44,7 +46,7 @@ import {
   clearExtract,
   type ExtractPayload,
 } from "@/lib/extract-store";
-import type { Priority, ReviewItem, PushResult } from "@/lib/types";
+import type { Priority, ReviewItem, PushResult, StalledIssue } from "@/lib/types";
 
 const PRIORITIES: Priority[] = ["urgent", "high", "medium", "low"];
 const UNASSIGNED = "__none__";
@@ -63,7 +65,10 @@ export default function ReviewPage() {
   const [pushing, setPushing] = useState(false);
   const [pushResults, setPushResults] = useState<PushResult[] | null>(null);
   const [pushError, setPushError] = useState<string | null>(null);
-  const [destination, setDestination] = useState<"linear" | "github">("linear");
+  const [destination, setDestination] = useState<"linear" | "github" | "notion">("linear");
+  const [stalled, setStalled] = useState<StalledIssue[] | null>(null);
+  const [stalledLoading, setStalledLoading] = useState(false);
+  const [stalledDismissed, setStalledDismissed] = useState(false);
 
   useEffect(() => {
     const payload = loadExtract();
@@ -74,6 +79,34 @@ export default function ReviewPage() {
   useEffect(() => {
     if (data) saveExtract(data);
   }, [data]);
+
+  useEffect(() => {
+    if (!hydrated || !data || stalled !== null || stalledLoading) return;
+    const hints = Array.from(
+      new Set(
+        (data.items ?? [])
+          .map((it) => it.assignee_hint)
+          .filter((h): h is string => Boolean(h))
+      )
+    );
+    if (hints.length === 0) {
+      setStalled([]);
+      return;
+    }
+    setStalledLoading(true);
+    fetch("/api/stalled", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ assignee_hints: hints, stale_days: 7 }),
+    })
+      .then((r) => r.json())
+      .then((res) => {
+        if (Array.isArray(res?.issues)) setStalled(res.issues);
+        else setStalled([]);
+      })
+      .catch(() => setStalled([]))
+      .finally(() => setStalledLoading(false));
+  }, [hydrated, data, stalled, stalledLoading]);
 
   const items = data?.items ?? [];
   const teams = data?.teams ?? [];
@@ -245,6 +278,7 @@ export default function ReviewPage() {
       <SuccessScreen
         results={pushResults}
         skipped={lowConfidenceCount}
+        destination={destination}
         onReset={() => {
           setPushResults(null);
           clearExtract();
@@ -256,9 +290,7 @@ export default function ReviewPage() {
 
   return (
     <>
-      <Head>
-        <title>Review — TicketForge</title>
-      </Head>
+      <Meta title="Review" path="/review" />
       <div className="min-h-screen bg-white text-zinc-900">
         <SiteHeader variant="app" step="review" showAvatar />
 
@@ -295,6 +327,9 @@ export default function ReviewPage() {
               </Button>
             </div>
           </div>
+
+          {/* Impact mini-stats */}
+          <ImpactStrip itemCount={items.length} highConfCount={items.filter((i) => i.confidence >= 0.85).length} />
 
           {/* Summary + Decisions */}
           <div className="mt-6 grid gap-4 md:grid-cols-3">
@@ -338,6 +373,14 @@ export default function ReviewPage() {
               </ul>
             </div>
           </div>
+
+          {/* Stalled commitments banner */}
+          {!stalledDismissed && stalled && stalled.length > 0 ? (
+            <StalledBanner
+              issues={stalled}
+              onDismiss={() => setStalledDismissed(true)}
+            />
+          ) : null}
 
           {/* Action items section */}
           <div className="mt-8">
@@ -511,16 +554,20 @@ export default function ReviewPage() {
                   <div>
                     <div className="text-sm font-semibold text-zinc-900">
                       Push to{" "}
-                      {destination === "linear" ? (
-                        <span className="font-mono">{teamLabel}</span>
-                      ) : (
-                        <span className="font-mono">GitHub Issues</span>
-                      )}
+                      <span className="font-mono">
+                        {destination === "linear"
+                          ? teamLabel
+                          : destination === "github"
+                            ? "GitHub Issues"
+                            : "Notion database"}
+                      </span>
                     </div>
                     <div className="text-xs text-zinc-500">
                       {destination === "linear"
                         ? "Created in default workflow state Backlog"
-                        : "Issues created with priority/assignee labels"}
+                        : destination === "github"
+                          ? "Issues created with priority/assignee labels"
+                          : "Pages created in your linked Notion database"}
                     </div>
                   </div>
                 </div>
@@ -548,6 +595,17 @@ export default function ReviewPage() {
                     >
                       GitHub
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => setDestination("notion")}
+                      className={`rounded px-3 py-1.5 text-xs font-medium transition ${
+                        destination === "notion"
+                          ? "bg-white text-zinc-900 shadow-sm"
+                          : "text-zinc-500 hover:text-zinc-700"
+                      }`}
+                    >
+                      Notion
+                    </button>
                   </div>
                   <Button
                     onClick={handlePush}
@@ -557,14 +615,14 @@ export default function ReviewPage() {
                     {pushing ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        Pushing to {destination === "linear" ? "Linear" : "GitHub"}…
+                        Pushing to {destinationLabel(destination)}…
                       </>
                     ) : (
                       <>
                         <UploadCloud className="h-4 w-4" />
                         Push {items.length} item
                         {items.length === 1 ? "" : "s"} to{" "}
-                        {destination === "linear" ? "Linear" : "GitHub"}
+                        {destinationLabel(destination)}
                       </>
                     )}
                   </Button>
@@ -584,6 +642,163 @@ export default function ReviewPage() {
       </div>
     </>
   );
+}
+
+function ImpactStrip({
+  itemCount,
+  highConfCount,
+}: {
+  itemCount: number;
+  highConfCount: number;
+}) {
+  const minutesManual = Math.max(15, itemCount * 6);
+  const minutesAuto = Math.max(2, Math.round(itemCount * 0.4));
+  const saved = minutesManual - minutesAuto;
+  const savedPct = Math.round((saved / minutesManual) * 100);
+
+  return (
+    <div className="mt-6 grid gap-3 sm:grid-cols-4">
+      <div className="rounded-lg border border-zinc-200 bg-white px-4 py-3">
+        <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+          Items extracted
+        </div>
+        <div className="mt-1 text-xl font-semibold text-zinc-900">{itemCount}</div>
+      </div>
+      <div className="rounded-lg border border-zinc-200 bg-white px-4 py-3">
+        <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+          High confidence
+        </div>
+        <div className="mt-1 text-xl font-semibold text-emerald-600">
+          {highConfCount}
+          <span className="ml-1 text-sm font-normal text-zinc-400">
+            / {itemCount}
+          </span>
+        </div>
+      </div>
+      <div className="rounded-lg border border-zinc-200 bg-white px-4 py-3">
+        <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+          Time vs. manual
+        </div>
+        <div className="mt-1 text-xl font-semibold text-zinc-900">
+          ~{minutesAuto} min
+          <span className="ml-1 text-sm font-normal text-zinc-400 line-through">
+            {minutesManual} min
+          </span>
+        </div>
+      </div>
+      <div className="rounded-lg border border-forge/20 bg-forge-soft/60 px-4 py-3">
+        <div className="text-[11px] font-medium uppercase tracking-wider text-forge">
+          You saved
+        </div>
+        <div className="mt-1 text-xl font-semibold text-forge">
+          {saved} min
+          <span className="ml-1 text-sm font-normal text-forge/70">
+            ({savedPct}%)
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StalledBanner({
+  issues,
+  onDismiss,
+}: {
+  issues: StalledIssue[];
+  onDismiss: () => void;
+}) {
+  const grouped = useMemo(() => {
+    const map = new Map<string, StalledIssue[]>();
+    for (const issue of issues) {
+      const key = issue.assigneeName ?? "Unassigned";
+      const list = map.get(key) ?? [];
+      list.push(issue);
+      map.set(key, list);
+    }
+    return Array.from(map.entries()).sort((a, b) => b[1].length - a[1].length);
+  }, [issues]);
+
+  return (
+    <div className="mt-6 overflow-hidden rounded-lg border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 shadow-sm">
+      <div className="flex items-start gap-3 border-b border-amber-200/70 px-5 py-4">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
+          <History className="h-4 w-4" />
+        </div>
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-amber-900">
+              Stalled commitments from prior meetings
+            </h3>
+            <span className="inline-flex items-center rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-amber-800 ring-1 ring-amber-200">
+              {issues.length} item{issues.length === 1 ? "" : "s"}
+            </span>
+          </div>
+          <p className="mt-0.5 text-xs leading-relaxed text-amber-800/80">
+            These tickets are still open in Linear and haven&apos;t been touched
+            in over a week. People in this meeting own them.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={onDismiss}
+          className="rounded-md p-1 text-amber-700 transition hover:bg-amber-100"
+          aria-label="Dismiss"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
+      </div>
+      <div className="divide-y divide-amber-200/50 bg-white/60">
+        {grouped.map(([owner, list]) => (
+          <div key={owner} className="px-5 py-3">
+            <div className="flex items-center gap-2 text-xs font-semibold text-zinc-700">
+              <span>{owner}</span>
+              <span className="text-zinc-400">·</span>
+              <span className="font-normal text-zinc-500">
+                {list.length} stalled
+              </span>
+            </div>
+            <ul className="mt-2 space-y-1.5">
+              {list.map((iss) => (
+                <li
+                  key={iss.id}
+                  className="flex items-center gap-3 text-xs"
+                >
+                  <a
+                    href={iss.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-mono text-[11px] font-medium text-zinc-500 hover:text-zinc-900"
+                  >
+                    {iss.identifier}
+                  </a>
+                  <a
+                    href={iss.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex-1 truncate text-zinc-800 hover:text-forge"
+                  >
+                    {iss.title}
+                  </a>
+                  <span className="inline-flex items-center gap-1 rounded bg-zinc-100 px-1.5 py-0.5 font-medium text-zinc-600">
+                    <Clock className="h-3 w-3" />
+                    {iss.daysSinceUpdate}d stale
+                  </span>
+                  <span className="text-zinc-400">{iss.state}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function destinationLabel(d: "linear" | "github" | "notion"): string {
+  if (d === "linear") return "Linear";
+  if (d === "github") return "GitHub";
+  return "Notion";
 }
 
 function ReviewRow({
@@ -779,18 +994,25 @@ function ReviewRow({
 function SuccessScreen({
   results,
   skipped,
+  destination,
   onReset,
 }: {
   results: PushResult[];
   skipped: number;
+  destination: "linear" | "github" | "notion";
   onReset: () => void;
 }) {
   const minutesSaved = Math.max(15, results.length * 6);
+  const destLabel = destinationLabel(destination);
+  const subCopy =
+    destination === "linear"
+      ? "Pushed to your Linear workspace. Owners have been notified according to your team's default workflow."
+      : destination === "github"
+        ? "Issues opened in your GitHub repository with priority and assignee labels."
+        : "Pages created in your linked Notion database with full metadata.";
   return (
     <>
-      <Head>
-        <title>Pushed to Linear — TicketForge</title>
-      </Head>
+      <Meta title="Pushed" path="/review" />
       <div className="min-h-screen bg-gradient-to-b from-white to-zinc-50">
         <SiteHeader variant="app" step="pushed" showAvatar />
 
@@ -805,11 +1027,10 @@ function SuccessScreen({
                 </div>
                 <h1 className="mt-5 text-2xl font-semibold tracking-tight">
                   {results.length} ticket{results.length === 1 ? "" : "s"}{" "}
-                  created in Linear
+                  created in {destLabel}
                 </h1>
                 <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-zinc-600">
-                  Pushed to your Linear workspace. Owners have been notified
-                  according to your team&apos;s default workflow.
+                  {subCopy}
                 </p>
               </div>
 

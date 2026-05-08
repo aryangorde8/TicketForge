@@ -18,8 +18,10 @@ Engineering managers spend 4–6 hours per week converting meeting notes into ti
 - **Confidence scoring** — every extraction comes with a 0–1 score so humans review what needs review, not everything
 - **Source quotes** — every ticket links back to the exact line in the transcript. No hallucinations.
 - **Smart assignee matching** — Levenshtein + first-name boost matches "marcus" to "Marcus Chen" at 88%
+- **Stalled commitments tracker** — surfaces tickets from prior meetings that the same people own and haven't touched in over a week. "Marcus has 3 items still TODO from 2 weeks ago" — broken promises, surfaced automatically.
 - **Smart deduplication** — checks Linear for existing similar tickets before creating new ones
-- **Multi-platform output** — Linear, GitHub Issues, Slack
+- **Multi-platform output** — Linear, GitHub Issues, Notion, Slack
+- **Slack bot** — `/ticketforge` slash command extracts and pushes inline
 - **MCP server** — exposes the pipeline as Model Context Protocol tools for Claude Desktop, Cursor
 
 ## Stack
@@ -50,11 +52,19 @@ GITHUB_TOKEN=ghp_...
 GITHUB_OWNER=your-org
 GITHUB_REPO=your-repo
 
+# Notion database
+NOTION_TOKEN=secret_...
+NOTION_DATABASE_ID=your-database-id
+
 # Slack bot
 SLACK_BOT_TOKEN=xoxb-...
 SLACK_SIGNING_SECRET=...
 TICKETFORGE_URL=https://your-deploy-url.com
 ```
+
+### Notion database setup
+
+The integration writes pages with `Name` (title), `Priority` (select), and `Assignee` (rich text) properties. Create a database with those columns, share it with your integration, then copy the database ID from the URL.
 
 ## Slack bot setup
 
@@ -81,7 +91,7 @@ For Claude Desktop integration, add to `claude_desktop_config.json`:
 }
 ```
 
-Tools exposed: `extract_action_items`, `push_to_linear`, `push_to_github`.
+Tools exposed: `extract_action_items`, `push_to_linear`, `push_to_github`, `push_to_notion`.
 
 ## License
 

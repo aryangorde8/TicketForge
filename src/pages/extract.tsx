@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import Head from "next/head";
+import { Meta } from "@/components/meta";
 import {
   Eraser,
   Info,
@@ -19,7 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { SiteHeader } from "@/components/site-header";
-import { SAMPLE_TRANSCRIPT } from "@/lib/sample-transcript";
+import { SAMPLE_SCENARIOS, SAMPLE_TRANSCRIPT } from "@/lib/sample-transcript";
 import { saveExtract } from "@/lib/extract-store";
 
 const PHASES = ["Analyzing transcript", "Extracting action items", "Matching assignees"];
@@ -141,9 +141,7 @@ export default function ExtractPage() {
 
   return (
     <>
-      <Head>
-        <title>Extract — TicketForge</title>
-      </Head>
+      <Meta title="Extract" path="/extract" description="Paste a meeting transcript or record live audio. We'll extract action items with confidence scores, source quotes, and assignee matches in seconds." />
       <div className="min-h-screen bg-white text-zinc-900">
         <SiteHeader variant="app" step="paste" showAvatar />
 
@@ -219,15 +217,23 @@ export default function ExtractPage() {
 
             {/* Footer */}
             <div className="flex h-11 items-center justify-between rounded-b-lg border-t border-zinc-200 bg-zinc-50/60 px-4">
-              <button
-                type="button"
-                onClick={() => setTranscript(SAMPLE_TRANSCRIPT)}
-                disabled={submitting}
-                className="text-forge hover:text-forge-hover inline-flex items-center gap-1.5 text-xs font-medium disabled:opacity-50"
-              >
-                <Sparkles className="h-3.5 w-3.5" />
-                Or load sample transcript
-              </button>
+              <div className="flex items-center gap-1.5 text-xs">
+                <Sparkles className="h-3.5 w-3.5 text-forge" />
+                <span className="font-medium text-zinc-700">Try an example:</span>
+                {SAMPLE_SCENARIOS.map((s) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => setTranscript(s.transcript)}
+                    disabled={submitting}
+                    title={s.description}
+                    className="rounded-md border border-zinc-200 bg-white px-2 py-0.5 font-medium text-zinc-700 transition hover:border-forge/40 hover:bg-forge-soft hover:text-forge disabled:opacity-50"
+                  >
+                    <span className="mr-1">{s.emoji}</span>
+                    {s.label}
+                  </button>
+                ))}
+              </div>
               <div className="font-mono text-[11px] text-zinc-500">
                 <span className="text-zinc-700">
                   {transcript.length.toLocaleString()}

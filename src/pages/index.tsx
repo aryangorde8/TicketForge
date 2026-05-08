@@ -1,4 +1,3 @@
-import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -10,6 +9,7 @@ import {
   SquareStack,
   Video,
 } from "lucide-react";
+import { Meta } from "@/components/meta";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 
@@ -24,13 +24,7 @@ const LOGOS = [
 export default function Home() {
   return (
     <>
-      <Head>
-        <title>TicketForge — Turn meetings into tickets</title>
-        <meta
-          name="description"
-          content="TicketForge converts meeting transcripts into properly-structured Linear tickets with confidence-scored action items, smart assignee matching, and human review built in."
-        />
-      </Head>
+      <Meta path="/" />
       <div className="min-h-screen bg-white text-zinc-900">
         <SiteHeader variant="marketing" />
 
