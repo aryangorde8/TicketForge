@@ -66,8 +66,27 @@ export default function ReviewPage() {
   const [pushing, setPushing] = useState(false);
   const [pushResults, setPushResults] = useState<PushResult[] | null>(null);
   const [pushError, setPushError] = useState<string | null>(null);
-  const [destination, setDestination] = useState<"linear" | "github" | "notion">("linear");
+  const [destination, setDestinationRaw] = useState<"linear" | "github" | "notion">("linear");
+  const [available, setAvailable] = useState<{
+    linear: boolean;
+    github: boolean;
+    notion: boolean;
+  }>({ linear: true, github: true, notion: true });
   const [stalled, setStalled] = useState<StalledIssue[] | null>(null);
+
+  function setDestination(d: "linear" | "github" | "notion") {
+    setDestinationRaw(d);
+    setPushError(null);
+  }
+
+  useEffect(() => {
+    fetch("/api/config")
+      .then((r) => r.json())
+      .then((cfg) => {
+        if (cfg?.destinations) setAvailable(cfg.destinations);
+      })
+      .catch(() => {});
+  }, []);
   const [stalledLoading, setStalledLoading] = useState(false);
   const [stalledDismissed, setStalledDismissed] = useState(false);
   const pushBtnRef = useRef<HTMLButtonElement | null>(null);
@@ -588,44 +607,29 @@ export default function ReviewPage() {
                 </div>
                 <div className="ml-auto flex items-center gap-3">
                   <div className="inline-flex rounded-md border border-zinc-200 bg-zinc-50 p-0.5">
-                    <button
-                      type="button"
+                    <DestButton
+                      label="Linear"
+                      active={destination === "linear"}
+                      enabled={available.linear}
                       onClick={() => setDestination("linear")}
-                      className={`rounded px-3 py-1.5 text-xs font-medium transition ${
-                        destination === "linear"
-                          ? "bg-white text-zinc-900 shadow-sm"
-                          : "text-zinc-500 hover:text-zinc-700"
-                      }`}
-                    >
-                      Linear
-                    </button>
-                    <button
-                      type="button"
+                    />
+                    <DestButton
+                      label="GitHub"
+                      active={destination === "github"}
+                      enabled={available.github}
                       onClick={() => setDestination("github")}
-                      className={`rounded px-3 py-1.5 text-xs font-medium transition ${
-                        destination === "github"
-                          ? "bg-white text-zinc-900 shadow-sm"
-                          : "text-zinc-500 hover:text-zinc-700"
-                      }`}
-                    >
-                      GitHub
-                    </button>
-                    <button
-                      type="button"
+                    />
+                    <DestButton
+                      label="Notion"
+                      active={destination === "notion"}
+                      enabled={available.notion}
                       onClick={() => setDestination("notion")}
-                      className={`rounded px-3 py-1.5 text-xs font-medium transition ${
-                        destination === "notion"
-                          ? "bg-white text-zinc-900 shadow-sm"
-                          : "text-zinc-500 hover:text-zinc-700"
-                      }`}
-                    >
-                      Notion
-                    </button>
+                    />
                   </div>
                   <button
                     ref={pushBtnRef}
                     onClick={handlePush}
-                    disabled={pushing || items.length === 0}
+                    disabled={pushing || items.length === 0 || !available[destination]}
                     className="btn btn-primary btn-lg magnet"
                   >
                     {pushing ? (
@@ -855,6 +859,37 @@ function destinationLabel(d: "linear" | "github" | "notion"): string {
   if (d === "linear") return "Linear";
   if (d === "github") return "GitHub";
   return "Notion";
+}
+
+function DestButton({
+  label,
+  active,
+  enabled,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  enabled: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={enabled ? onClick : undefined}
+      disabled={!enabled}
+      title={enabled ? `Push to ${label}` : `${label} not configured (env vars not set)`}
+      className={`rounded px-3 py-1.5 text-xs font-medium transition ${
+        active
+          ? "bg-white text-zinc-900 shadow-sm"
+          : enabled
+            ? "text-zinc-500 hover:text-zinc-700"
+            : "cursor-not-allowed text-zinc-300"
+      }`}
+    >
+      {label}
+      {!enabled ? <span className="ml-1.5 text-[10px]">·</span> : null}
+    </button>
+  );
 }
 
 function ReviewRow({
