@@ -10,6 +10,8 @@ interface ExtractApiResponse {
   items: ReviewItem[];
   teams: LinearTeam[];
   default_team_id: string | null;
+  manual_time_estimate_minutes: number;
+  manual_time_reasoning: string;
 }
 
 interface ErrorResponse {
@@ -75,5 +77,7 @@ export default async function handler(
     items,
     teams,
     default_team_id: defaultTeamId,
+    manual_time_estimate_minutes: extraction.manual_time_estimate_minutes,
+    manual_time_reasoning: extraction.manual_time_reasoning,
   });
 }

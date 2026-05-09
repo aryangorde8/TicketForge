@@ -10,6 +10,8 @@ export interface ExtractPayload {
   teams: LinearTeam[];
   default_team_id: string | null;
   transcript: string;
+  manual_time_estimate_minutes?: number;
+  manual_time_reasoning?: string;
 }
 
 const KEY = "ticketforge:extract";

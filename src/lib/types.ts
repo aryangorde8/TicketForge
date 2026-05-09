@@ -15,6 +15,8 @@ export interface ExtractionResult {
   meeting_summary: string;
   decisions: string[];
   action_items: ActionItem[];
+  manual_time_estimate_minutes: number;
+  manual_time_reasoning: string;
 }
 
 export interface LinearUser {

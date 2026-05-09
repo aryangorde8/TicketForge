@@ -285,6 +285,7 @@ export default function ReviewPage() {
         results={pushResults}
         skipped={lowConfidenceCount}
         destination={destination}
+        manualTimeMinutes={data.manual_time_estimate_minutes}
         onReset={() => {
           setPushResults(null);
           clearExtract();
@@ -338,7 +339,12 @@ export default function ReviewPage() {
           </div>
 
           {/* Impact mini-stats */}
-          <ImpactStrip itemCount={items.length} highConfCount={items.filter((i) => i.confidence >= 0.85).length} />
+          <ImpactStrip
+            itemCount={items.length}
+            highConfCount={items.filter((i) => i.confidence >= 0.85).length}
+            manualTimeMinutes={data.manual_time_estimate_minutes}
+            manualTimeReasoning={data.manual_time_reasoning}
+          />
 
           {/* Summary + Decisions */}
           <div className="mt-6 grid gap-4 md:grid-cols-3">
@@ -682,14 +688,19 @@ function burstParticles(target: HTMLElement | null) {
 function ImpactStrip({
   itemCount,
   highConfCount,
+  manualTimeMinutes,
+  manualTimeReasoning,
 }: {
   itemCount: number;
   highConfCount: number;
+  manualTimeMinutes?: number;
+  manualTimeReasoning?: string;
 }) {
   const lowConfCount = Math.max(0, itemCount - highConfCount);
+  const showTime = typeof manualTimeMinutes === "number" && manualTimeMinutes > 0;
 
   return (
-    <div className="mt-6 grid gap-3 sm:grid-cols-3">
+    <div className={`mt-6 grid gap-3 ${showTime ? "sm:grid-cols-4" : "sm:grid-cols-3"}`}>
       <div className="rounded-lg border border-zinc-200 bg-white px-4 py-3">
         <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
           Items extracted
@@ -719,6 +730,29 @@ function ImpactStrip({
           {lowConfCount}
         </div>
       </div>
+      {showTime ? (
+        <div
+          className="rounded-lg border px-4 py-3"
+          style={{
+            borderColor: "var(--forge-ring)",
+            background: "var(--forge-soft)",
+          }}
+          title={manualTimeReasoning}
+        >
+          <div
+            className="text-[11px] font-medium uppercase tracking-wider"
+            style={{ color: "var(--forge)" }}
+          >
+            AI estimate · manual
+          </div>
+          <div
+            className="mt-1 text-xl font-semibold"
+            style={{ color: "var(--forge)" }}
+          >
+            ~{manualTimeMinutes} min
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -1017,11 +1051,13 @@ function SuccessScreen({
   results,
   skipped,
   destination,
+  manualTimeMinutes,
   onReset,
 }: {
   results: PushResult[];
   skipped: number;
   destination: "linear" | "github" | "notion";
+  manualTimeMinutes?: number;
   onReset: () => void;
 }) {
   const destLabel = destinationLabel(destination);
@@ -1156,6 +1192,15 @@ function SuccessScreen({
                 <span className="font-medium" style={{ color: "var(--ink)" }}>
                   {destLabel}
                 </span>
+                {typeof manualTimeMinutes === "number" && manualTimeMinutes > 0 ? (
+                  <>
+                    {" "}
+                    · AI estimate of manual time:{" "}
+                    <span className="font-medium" style={{ color: "var(--ink)" }}>
+                      ~{manualTimeMinutes} min
+                    </span>
+                  </>
+                ) : null}
                 .
               </div>
             </div>

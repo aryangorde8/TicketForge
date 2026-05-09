@@ -24,6 +24,8 @@ const ExtractionSchema = z.object({
   meeting_summary: z.string(),
   decisions: z.array(z.string()),
   action_items: z.array(ActionItemSchema),
+  manual_time_estimate_minutes: z.number().min(0).max(240),
+  manual_time_reasoning: z.string(),
 });
 
 const SCHEMA_TS = `interface ActionItem {
@@ -40,6 +42,8 @@ interface ExtractionResult {
   meeting_summary: string;                                // 2-3 sentence overview
   decisions: string[];                                    // non-actionable conclusions
   action_items: ActionItem[];
+  manual_time_estimate_minutes: number;                   // honest estimate of how long a human would spend doing this manually
+  manual_time_reasoning: string;                          // 1 sentence justifying the estimate
 }`;
 
 function buildSystemPrompt(): string {
@@ -68,6 +72,16 @@ ACTION ITEMS vs DECISIONS:
 - An action_item has a doer and a thing-to-do. It produces work.
 - A decision is a conclusion reached without an action owner (e.g., "we decided to deprecate v1 by Q3"). It is captured for the record.
 - Do not duplicate the same statement across both arrays. If a decision implies follow-up work, capture the work as the action_item and the conclusion as the decision — but pick the framing that fits best and use it once.
+
+MANUAL TIME ESTIMATE (be honest, not promotional):
+Estimate how long a human PM would realistically spend converting this transcript into properly-formatted tickets BY HAND. This includes: re-reading the transcript, identifying action items, switching to Linear, creating each ticket, writing a title and description, finding the right assignee, setting priority, parsing the due date, and pasting source context. Calibrate against:
+- 0 items: ~1 min (still had to read the transcript to confirm there's nothing).
+- Per item with a clear owner and deadline: 2–3 min each.
+- Per item with ambiguous owner / fuzzy deadline / requires re-reading transcript: 4–6 min each.
+- Plus a 1–2 min overhead for opening Linear, finding the right team/project, and context-switching.
+- A trivial one-line transcript with one obvious action ≈ 2–3 minutes total. Do NOT inflate this.
+- A 30-line meeting with 5 mixed-clarity items ≈ 20–30 minutes total.
+manual_time_reasoning must be a single sentence explaining the math (e.g. "5 items × ~3 min each + 2 min overhead").
 
 OTHER RULES:
 - title: imperative voice, under 80 characters, starts with a verb. "Investigate Stripe payment timeout" not "Stripe issue".
@@ -167,6 +181,8 @@ export async function extractActionItems(
   return {
     meeting_summary: parsed.meeting_summary,
     decisions: parsed.decisions,
+    manual_time_estimate_minutes: Math.max(0, Math.round(parsed.manual_time_estimate_minutes)),
+    manual_time_reasoning: parsed.manual_time_reasoning,
     action_items: parsed.action_items.map((item) => ({
       ...item,
       id: uuidv4(),
