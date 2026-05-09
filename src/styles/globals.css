@@ -338,7 +338,7 @@ body {
     border-radius: 0;
   }
 
-  /* Section number watermark — huge, low-opacity background numeral */
+  /* Section number watermark — huge editorial numeral */
   .section-num {
     position: absolute;
     pointer-events: none;
@@ -347,14 +347,16 @@ body {
     font-style: italic;
     font-size: clamp(180px, 28vw, 380px);
     line-height: 0.85;
-    color: var(--ink);
-    opacity: 0.045;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--ink);
+    opacity: 0.16;
     letter-spacing: -0.04em;
     user-select: none;
     z-index: 0;
   }
   [data-theme="dark"] .section-num {
-    opacity: 0.06;
+    -webkit-text-stroke: 1.5px var(--vermillion);
+    opacity: 0.55;
   }
 
   /* Margin annotation — small caps with vertical rule */
