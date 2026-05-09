@@ -52,10 +52,6 @@ export default function Home() {
       {/* HERO */}
       <section style={{ position: "relative", padding: "72px 0 80px", overflow: "hidden" }}>
         <Atmosphere withCursorGlow />
-        <span className="section-num" style={{ left: "3vw", top: "10%" }}>
-          01
-        </span>
-
         <div className="relative z-[2] mx-auto max-w-[1320px] px-7">
           <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
             <div className="reveal">
@@ -203,9 +199,6 @@ export default function Home() {
 
       {/* HOW IT WORKS */}
       <section id="how" style={{ position: "relative", padding: "120px 0 96px", overflow: "hidden" }}>
-        <span className="section-num" style={{ right: "3vw", top: "5%" }}>
-          02
-        </span>
         <div className="relative z-[2] mx-auto max-w-[1320px] px-7">
           <div className="hard-rule reveal">
             <span className="num">II</span>
@@ -269,9 +262,6 @@ export default function Home() {
 
       {/* IMPACT */}
       <section id="impact" style={{ position: "relative", padding: "96px 0", overflow: "hidden" }}>
-        <span className="section-num" style={{ left: "3vw", top: "10%" }}>
-          03
-        </span>
         <div className="relative z-[2] mx-auto max-w-[1320px] px-7">
           <div className="hard-rule reveal">
             <span className="num">III</span>

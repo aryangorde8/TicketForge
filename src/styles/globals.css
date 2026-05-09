@@ -338,27 +338,6 @@ body {
     border-radius: 0;
   }
 
-  /* Section number watermark — huge editorial numeral */
-  .section-num {
-    position: absolute;
-    pointer-events: none;
-    font-family: var(--font-display), serif;
-    font-weight: 400;
-    font-style: italic;
-    font-size: clamp(120px, 18vw, 260px);
-    line-height: 0.85;
-    color: transparent;
-    -webkit-text-stroke: 1.5px var(--ink);
-    opacity: 0.16;
-    letter-spacing: -0.04em;
-    user-select: none;
-    z-index: 0;
-  }
-  [data-theme="dark"] .section-num {
-    -webkit-text-stroke: 1.5px var(--ink);
-    opacity: 0.42;
-  }
-
   /* Margin annotation — small caps with vertical rule */
   .margin-note {
     font-family: var(--font-mono), monospace;
