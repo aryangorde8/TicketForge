@@ -686,13 +686,10 @@ function ImpactStrip({
   itemCount: number;
   highConfCount: number;
 }) {
-  const minutesManual = Math.max(15, itemCount * 6);
-  const minutesAuto = Math.max(2, Math.round(itemCount * 0.4));
-  const saved = minutesManual - minutesAuto;
-  const savedPct = Math.round((saved / minutesManual) * 100);
+  const lowConfCount = Math.max(0, itemCount - highConfCount);
 
   return (
-    <div className="mt-6 grid gap-3 sm:grid-cols-4">
+    <div className="mt-6 grid gap-3 sm:grid-cols-3">
       <div className="rounded-lg border border-zinc-200 bg-white px-4 py-3">
         <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
           Items extracted
@@ -712,24 +709,14 @@ function ImpactStrip({
       </div>
       <div className="rounded-lg border border-zinc-200 bg-white px-4 py-3">
         <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
-          Time vs. manual
+          Need review
         </div>
-        <div className="mt-1 text-xl font-semibold text-zinc-900">
-          ~{minutesAuto} min
-          <span className="ml-1 text-sm font-normal text-zinc-400 line-through">
-            {minutesManual} min
-          </span>
-        </div>
-      </div>
-      <div className="rounded-lg border border-forge/20 bg-forge-soft/60 px-4 py-3">
-        <div className="text-[11px] font-medium uppercase tracking-wider text-forge">
-          You saved
-        </div>
-        <div className="mt-1 text-xl font-semibold text-forge">
-          {saved} min
-          <span className="ml-1 text-sm font-normal text-forge/70">
-            ({savedPct}%)
-          </span>
+        <div
+          className={`mt-1 text-xl font-semibold ${
+            lowConfCount > 0 ? "text-amber-600" : "text-zinc-400"
+          }`}
+        >
+          {lowConfCount}
         </div>
       </div>
     </div>
@@ -1037,7 +1024,6 @@ function SuccessScreen({
   destination: "linear" | "github" | "notion";
   onReset: () => void;
 }) {
-  const minutesSaved = Math.max(15, results.length * 6);
   const destLabel = destinationLabel(destination);
   const subCopy =
     destination === "linear"
@@ -1166,11 +1152,11 @@ function SuccessScreen({
                   color: "var(--muted)",
                 }}
               >
-                Time saved vs. manual:{" "}
+                {results.length} ticket{results.length === 1 ? "" : "s"} live in{" "}
                 <span className="font-medium" style={{ color: "var(--ink)" }}>
-                  ~{minutesSaved} minutes
-                </span>{" "}
-                · You&apos;re welcome.
+                  {destLabel}
+                </span>
+                .
               </div>
             </div>
 
