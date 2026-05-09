@@ -50,7 +50,7 @@ export default function Home() {
       </div>
 
       {/* HERO */}
-      <section style={{ position: "relative", padding: "72px 0 80px" }}>
+      <section style={{ position: "relative", padding: "72px 0 80px", overflow: "hidden" }}>
         <Atmosphere withCursorGlow />
         <span className="section-num" style={{ left: "3vw", top: "10%" }}>
           01
@@ -202,7 +202,7 @@ export default function Home() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section id="how" style={{ position: "relative", padding: "120px 0 96px" }}>
+      <section id="how" style={{ position: "relative", padding: "120px 0 96px", overflow: "hidden" }}>
         <span className="section-num" style={{ right: "3vw", top: "5%" }}>
           02
         </span>
@@ -268,7 +268,7 @@ export default function Home() {
       </section>
 
       {/* IMPACT */}
-      <section id="impact" style={{ position: "relative", padding: "96px 0" }}>
+      <section id="impact" style={{ position: "relative", padding: "96px 0", overflow: "hidden" }}>
         <span className="section-num" style={{ left: "3vw", top: "10%" }}>
           03
         </span>
