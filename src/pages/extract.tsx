@@ -2,18 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import {
   Eraser,
-  Info,
-  Link as LinkIcon,
   Loader2,
   Lock,
   Mic,
-  Settings2,
-  Shield,
   Sparkles,
   Square,
-  Upload,
   WandSparkles,
-  Zap,
 } from "lucide-react";
 import { Atmosphere, useMagnet, useReveal } from "@/components/atmosphere";
 import { Meta } from "@/components/meta";
@@ -237,12 +231,6 @@ export default function ExtractPage() {
                       Record meeting
                     </button>
                   )}
-                  <ToolbarDivider />
-                  <ToolbarBtn icon={Upload} label="Upload .txt / .vtt" disabled />
-                  <ToolbarDivider />
-                  <ToolbarBtn icon={LinkIcon} label="Paste from URL" disabled />
-                  <ToolbarDivider />
-                  <ToolbarBtn icon={Settings2} label="Settings" disabled />
                 </div>
                 <div className="flex items-center gap-2 mono text-[11px]" style={{ color: "var(--muted-2)" }}>
                   <Lock className="h-3 w-3" />
@@ -380,41 +368,6 @@ export default function ExtractPage() {
             </div>
           ) : null}
 
-          {/* Tip cards */}
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
-            <TipCard
-              icon={Info}
-              eyebrow="Tip"
-              title="Speaker labels help."
-              body={
-                <>
-                  Lines like <span className="mono rounded px-1" style={{ background: "var(--bg-quiet)" }}>Marcus:</span>{" "}
-                  dramatically improve assignee matching.
-                </>
-              }
-            />
-            <TipCard
-              icon={Shield}
-              eyebrow="Privacy"
-              title="Nothing is stored."
-              body="Transcripts are processed in-memory and discarded after the run."
-            />
-            <TipCard
-              icon={Zap}
-              eyebrow="Shortcut"
-              title={
-                <>
-                  Press <span className="kbd">⌘</span> <span className="kbd">↵</span> to extract.
-                </>
-              }
-              body={
-                <>
-                  Or paste with <span className="kbd">⌘</span> <span className="kbd">V</span> — we
-                  auto-detect transcript format.
-                </>
-              }
-            />
-          </div>
         </div>
       </div>
     </>
@@ -440,54 +393,3 @@ function formatDuration(seconds: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
-function ToolbarBtn({
-  icon: Icon,
-  label,
-  disabled,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  disabled?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      disabled={disabled}
-      className="inline-flex items-center gap-1.5 rounded px-2 py-1 text-xs disabled:cursor-not-allowed disabled:opacity-60"
-      style={{ color: "var(--ink-2)" }}
-    >
-      <Icon className="h-3.5 w-3.5" />
-      {label}
-    </button>
-  );
-}
-
-function ToolbarDivider() {
-  return <span className="mx-1 h-4 w-px" style={{ background: "var(--line-2)" }} />;
-}
-
-function TipCard({
-  icon: Icon,
-  eyebrow,
-  title,
-  body,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  eyebrow: string;
-  title: React.ReactNode;
-  body: React.ReactNode;
-}) {
-  return (
-    <div className="surface-card" style={{ padding: 16 }}>
-      <div className="flex items-center gap-2 text-xs" style={{ color: "var(--muted)" }}>
-        <Icon className="h-3.5 w-3.5" /> {eyebrow}
-      </div>
-      <div className="mt-1.5 text-sm font-medium" style={{ color: "var(--ink)" }}>
-        {title}
-      </div>
-      <div className="mt-1 text-xs leading-relaxed" style={{ color: "var(--muted)" }}>
-        {body}
-      </div>
-    </div>
-  );
-}

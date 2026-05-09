@@ -64,15 +64,20 @@ export function SiteHeader({
               color: "var(--ink)",
             }}
           >
-            <Link href="/how-it-works" className="hover:opacity-60">
+            <Link href="/#how" className="hover:opacity-60">
               How it works
             </Link>
-            <Link href="/impact" className="hover:opacity-60">
+            <Link href="/#impact" className="hover:opacity-60">
               Impact
             </Link>
-            <Link href="/extract" className="hover:opacity-60">
-              Try it
-            </Link>
+            <a
+              href="https://github.com/aryangorde8/TicketForge"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:opacity-60"
+            >
+              GitHub
+            </a>
           </nav>
         ) : (
           <nav className="hidden items-center gap-3 md:flex">

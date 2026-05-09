@@ -593,8 +593,8 @@ function SiteFooter() {
             links={[
               { label: "Extract", href: "/extract" },
               { label: "Review", href: "/review" },
-              { label: "How it works", href: "/how-it-works" },
-              { label: "Impact", href: "/impact" },
+              { label: "How it works", href: "/#how" },
+              { label: "Impact", href: "/#impact" },
             ]}
           />
           <FooterCol
