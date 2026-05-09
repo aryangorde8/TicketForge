@@ -572,7 +572,7 @@ function SiteFooter() {
           <span style={{ color: "var(--muted)" }}>FILED 2026</span>
         </div>
 
-        <div className="grid gap-10 mt-10 md:grid-cols-[2fr_1fr_1fr_1fr]">
+        <div className="grid gap-10 mt-10 md:grid-cols-[2fr_1fr_1fr]">
           <div className="reveal">
             <Link
               href="/"
@@ -587,91 +587,25 @@ function SiteFooter() {
             >
               Meetings → tickets, in seconds. No more transcription archaeology on Friday afternoon.
             </p>
-            <div className="mt-6" style={{ maxWidth: 380 }}>
-              <div className="margin-note mb-2.5">SUBSCRIBE</div>
-              <form
-                className="flex"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  const target = e.target as HTMLFormElement;
-                  const input = target.querySelector("input") as HTMLInputElement | null;
-                  const btn = target.querySelector("button span") as HTMLSpanElement | null;
-                  if (input) input.value = "";
-                  if (btn) btn.textContent = "✓ ON THE LIST";
-                }}
-              >
-                <input
-                  type="email"
-                  placeholder="you@company.com"
-                  required
-                  className="flex-1 px-3 outline-none"
-                  style={{
-                    background: "transparent",
-                    border: "1px solid var(--ink)",
-                    borderRight: "none",
-                    color: "var(--ink)",
-                    fontFamily: "var(--font-mono)",
-                    fontSize: 13,
-                    height: 42,
-                  }}
-                />
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  style={{ borderRadius: 0, boxShadow: "none", height: 42 }}
-                >
-                  <span>Subscribe</span>
-                </button>
-              </form>
-            </div>
           </div>
           <FooterCol
             title="Product"
             links={[
               { label: "Extract", href: "/extract" },
               { label: "Review", href: "/review" },
-              { label: "Integrations", href: "/how-it-works" },
+              { label: "How it works", href: "/how-it-works" },
               { label: "Impact", href: "/impact" },
             ]}
           />
           <FooterCol
-            title="Resources"
+            title="Source"
             links={[
-              { label: "How it works", href: "/how-it-works" },
               { label: "GitHub", href: "https://github.com/aryangorde8/TicketForge" },
-              { label: "MCP server", href: "/how-it-works" },
-              { label: "Status", href: "#" },
-            ]}
-          />
-          <FooterCol
-            title="The fine print"
-            links={[
-              { label: "Devpost", href: "#" },
-              { label: "Hackathon", href: "#" },
-              { label: "Privacy", href: "#" },
-              { label: "Terms", href: "#" },
             ]}
           />
         </div>
 
-        <div
-          className="mt-16 flex flex-wrap items-center justify-between gap-3 py-5"
-          style={{
-            borderTop: "1px solid var(--ink)",
-            fontFamily: "var(--font-mono)",
-            fontSize: 11,
-            textTransform: "uppercase",
-            letterSpacing: "0.12em",
-            color: "var(--ink)",
-          }}
-        >
-          <div>© 2026 — Internal Tools Hacks submission</div>
-          <div className="flex items-center gap-4">
-            <a href="https://github.com/aryangorde8/TicketForge">GitHub →</a>
-          </div>
-        </div>
-
-        <div className="reveal relative overflow-hidden pb-2 mt-4">
+        <div className="reveal relative overflow-hidden pb-2 mt-16">
           <div className="word-huge">TicketForge</div>
         </div>
       </div>
