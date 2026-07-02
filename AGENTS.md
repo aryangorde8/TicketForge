@@ -1,5 +1,11 @@
-<!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know
+# Agent notes
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
+TicketForge is a **Python-only** project: a FastAPI backend with server-rendered
+Jinja2 templates. There is no TypeScript, Node, or Next.js here.
+
+- Backend + routes: `app/` (FastAPI, Pydantic, httpx, Groq SDK)
+- Frontend: `templates/` (Jinja2) + `static/` (plain CSS, vanilla JS)
+- Run: `python run.py` (or `uvicorn app.main:app --reload`)
+- Dependencies live in a virtualenv; see `README.md` for setup.
+
+Keep it Python. Do not reintroduce a JavaScript/TypeScript build step.

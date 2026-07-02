@@ -2,96 +2,84 @@
 
 Convert meeting transcripts into properly-structured Linear tickets in seconds.
 
-**Live demo:** [ticketforge.aryangorde.com](https://ticketforge.aryangorde.com)
+Built with **Python end to end** — a [FastAPI](https://fastapi.tiangolo.com/)
+backend and server-rendered [Jinja2](https://jinja.palletsprojects.com/) frontend.
+No TypeScript, no Node.
 
 ## What it does
 
-Engineering managers spend 4–6 hours per week converting meeting notes into tickets. For a 20-person team, that's $130K/year in lost capacity. TicketForge fixes this:
+Engineering managers spend 4–6 hours per week converting meeting notes into tickets.
+For a 20-person team, that's $130K/year in lost capacity. TicketForge fixes this:
 
-1. **Paste, upload, or record** a meeting transcript
+1. **Paste or record** a meeting transcript
 2. **AI extracts** action items with confidence scores, source quotes, and assignee matches
 3. **Review and edit** in a clean human-in-the-loop UI
-4. **Push to Linear, GitHub Issues, or via Slack bot**
+4. **Push to Linear**
 
 ## Differentiators
 
 - **Confidence scoring** — every extraction comes with a 0–1 score so humans review what needs review, not everything
 - **Source quotes** — every ticket links back to the exact line in the transcript. No hallucinations.
 - **Smart assignee matching** — Levenshtein + first-name boost matches "marcus" to "Marcus Chen" at 88%
-- **Stalled commitments tracker** — surfaces tickets from prior meetings that the same people own and haven't touched in over a week. "Marcus has 3 items still TODO from 2 weeks ago" — broken promises, surfaced automatically.
-- **Smart deduplication** — checks Linear for existing similar tickets before creating new ones
-- **Multi-platform output** — Linear, GitHub Issues, Notion, Slack
-- **Slack bot** — `/ticketforge` slash command extracts and pushes inline
-- **MCP server** — exposes the pipeline as Model Context Protocol tools for Claude Desktop, Cursor
+- **Voice → tickets** — record a meeting and Whisper transcribes it in seconds
 
 ## Stack
 
-- **Next.js 16** (Pages Router) + TypeScript + Tailwind CSS v4
+- **FastAPI** + **Jinja2** (server-rendered HTML) + plain CSS / vanilla JS
+- **Pydantic** for structured-output validation with retry
 - **Groq** (Llama 3.3 70B + Whisper Large V3 Turbo) for extraction and transcription
-- **Zod** for structured output validation with retry
-- **Linear SDK**, GitHub REST API, Slack Web API
-- **Framer Motion** for animations
-- Hosted on AWS EC2 (t3.small) with Nginx + PM2 + Let's Encrypt SSL
+- **Linear** via its GraphQL API (`httpx`)
 
 ## Local setup
 
-```bash
-git clone https://github.com/aryangorde8/TicketForge.git
-cd TicketForge
-npm install
-cp .env.local.example .env.local
-# Fill in GROQ_API_KEY and LINEAR_API_KEY
-npm run dev
-```
-
-### Optional integrations
+Python 3.11+ recommended (developed on 3.14).
 
 ```bash
-# GitHub Issues
-GITHUB_TOKEN=ghp_...
-GITHUB_OWNER=your-org
-GITHUB_REPO=your-repo
+# 1. Virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+# If `python -m venv` can't bootstrap pip on your system (Debian/Ubuntu):
+#   python3 -m venv .venv --without-pip
+#   curl -sS https://bootstrap.pypa.io/get-pip.py | .venv/bin/python
 
-# Notion database
-NOTION_TOKEN=secret_...
-NOTION_DATABASE_ID=your-database-id
+# 2. Dependencies
+pip install -r requirements.txt
 
-# Slack bot
-SLACK_BOT_TOKEN=xoxb-...
-SLACK_SIGNING_SECRET=...
-TICKETFORGE_URL=https://your-deploy-url.com
+# 3. Environment
+cp .env.example .env
+#   fill in GROQ_API_KEY (required for extract/transcribe)
+#   and LINEAR_API_KEY (required to push)
+
+# 4. Run
+python run.py                    # http://127.0.0.1:8000
+# or: uvicorn app.main:app --reload
 ```
 
-### Notion database setup
+## Environment variables
 
-The integration writes pages with `Name` (title), `Priority` (select), and `Assignee` (rich text) properties. Create a database with those columns, share it with your integration, then copy the database ID from the URL.
+| Variable           | Required        | Purpose                                 |
+| ------------------ | --------------- | --------------------------------------- |
+| `GROQ_API_KEY`     | yes             | Extraction + transcription              |
+| `LINEAR_API_KEY`   | to push tickets | Fetch workspace, create issues          |
+| `EXTRACT_MODEL`    | no              | default `llama-3.3-70b-versatile`       |
+| `TRANSCRIBE_MODEL` | no              | default `whisper-large-v3-turbo`        |
+| `SESSION_SECRET`   | prod            | signs the extract→review session cookie |
 
-## Slack bot setup
+## Project layout
 
-1. Create a Slack app at [api.slack.com/apps](https://api.slack.com/apps)
-2. Add slash command `/ticketforge` pointing to `https://YOUR_URL/api/slack/command`
-3. Add interactivity URL `https://YOUR_URL/api/slack/interact`
-4. Add bot scopes: `chat:write`, `commands`
-5. Install to workspace, copy bot token + signing secret to env vars
-6. Use it: `/ticketforge <paste transcript>`
-
-## MCP server
-
-For Claude Desktop integration, add to `claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "ticketforge": {
-      "command": "node",
-      "args": ["/absolute/path/to/scripts/mcp-server.mjs"],
-      "env": { "TICKETFORGE_URL": "https://ticketforge.aryangorde.com" }
-    }
-  }
-}
+```
+app/         FastAPI app, routes, extraction, matching, Linear client, models
+templates/   Jinja2 pages (index, extract, review, success)
+static/      CSS + vanilla JS
+public/      favicon / OG assets
+run.py       dev entrypoint
 ```
 
-Tools exposed: `extract_action_items`, `push_to_linear`, `push_to_github`, `push_to_notion`.
+## Roadmap
+
+Core pipeline (extract → review → push to Linear + transcription) is implemented.
+Not yet ported: GitHub / Notion destinations, the Slack bot, the stalled-commitments
+tracker, and the MCP server.
 
 ## License
 
