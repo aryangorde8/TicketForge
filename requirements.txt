@@ -1,0 +1,8 @@
+# TicketForge — Python (FastAPI + Jinja2) stack
+fastapi
+uvicorn[standard]
+jinja2
+python-multipart
+httpx
+groq
+itsdangerous

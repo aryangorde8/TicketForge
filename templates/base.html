@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}TicketForge{% endblock %}</title>
+  <meta name="description" content="Convert meeting transcripts into properly-structured Linear tickets in seconds." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..600&family=Inter:wght@300..600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <link rel="icon" href="/public/favicon.ico" />
+</head>
+<body>
+  <div class="grain"></div>
+
+  <header class="site-header">
+    <div class="container site-header-inner">
+      <a href="/" class="wordmark">TicketForge</a>
+      <nav class="nav-links">
+        {% block nav %}
+        <a href="/#how">How</a>
+        <a href="/#impact">Impact</a>
+        <a href="/extract">Extract</a>
+        {% endblock %}
+      </nav>
+    </div>
+  </header>
+
+  {% block body %}{% endblock %}
+
+  {% block scripts %}{% endblock %}
+  <script src="/static/js/reveal.js"></script>
+</body>
+</html>

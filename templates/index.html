@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}TicketForge — Meetings into tickets, in seconds{% endblock %}
+
+{% block body %}
+<!-- ISSUE STRIP -->
+<div class="container">
+  <div class="issue-strip">
+    <span class="issue-cell"><span class="pip"></span> ISSUE NO. 05</span>
+    <span class="issue-cell hidden-sm">VOLUME I — ENGINEERING TOOLS</span>
+    <span class="issue-cell">FILED BY <span style="color: var(--vermillion); font-weight: 600;">FORGE</span></span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section style="position: relative; padding: 72px 0 80px; overflow: hidden;">
+  <div class="atmos"><div class="aurora"><i></i></div><div class="dotgrid"></div></div>
+  <div class="z2 container">
+    <div class="reveal">
+      <div class="margin-note" style="margin-bottom: 32px;">A FIELD MANUAL FOR ENGINEERING TEAMS WHO MEET TOO MUCH.</div>
+      <h1 class="display display-xl">
+        Turn meetings<br />
+        <span style="color: var(--vermillion);">into</span> <span class="ital">tickets</span>.<br />
+        <span style="color: var(--muted); font-weight: 300; font-style: italic;">In&nbsp;seconds.</span>
+      </h1>
+      <p class="lede" style="margin-top: 40px;">
+        TicketForge converts meeting transcripts into properly-structured Linear tickets — with
+        confidence-scored action items, smart assignee matching, and human review built in.
+      </p>
+      <div style="margin-top: 40px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px;">
+        <a href="/extract?sample=1" class="btn btn-primary btn-lg">▶ Try with sample</a>
+        <a href="/extract" class="btn btn-secondary btn-lg">Paste your own <span class="kbd">⌘V</span></a>
+        <span class="mono" style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em;">No login req'd</span>
+      </div>
+    </div>
+
+    <!-- Hero mock -->
+    <div class="hero-mock reveal">
+      <div class="hero-bar">
+        <span class="hero-dot" style="background: var(--vermillion);"></span>
+        <span class="hero-dot" style="border: 1px solid var(--bg);"></span>
+        <span class="hero-dot" style="border: 1px solid var(--bg);"></span>
+        <span class="mono" style="margin-left: 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;">🔒 ticketforge.app/extract</span>
+      </div>
+      <div class="grid" style="grid-template-columns: 1.1fr 1fr;">
+        <div style="padding: 24px 28px; border-right: 1px solid var(--ink);">
+          <div class="mono" style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted); margin-bottom: 16px;">
+            <span style="color: var(--vermillion);">—</span> Transcript · Eng sync · Tue 10:00
+          </div>
+          {% for line in [
+            ("Marcus", "Aryan, the Stripe gateway is timing out — 5% of checkouts yesterday. Make it urgent."),
+            ("Aryan", "On it tomorrow. Likely the retry config we shipped Friday."),
+            ("Priya", "Also we need to send the v1 API deprecation notice this week — 30-day window."),
+            ("Marcus", "I'll take the OAuth2 migration next sprint.")
+          ] %}
+          <span class="mono" style="display: block; font-size: 12.5px; line-height: 1.85; color: var(--ink-2);">
+            <span style="color: var(--vermillion); font-weight: 600;">{{ line[0] }}:</span> {{ line[1] }}
+          </span>
+          {% endfor %}
+        </div>
+        <div style="padding: 20px 24px;">
+          <div class="mono flex items-center justify-between" style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted); margin-bottom: 16px;">
+            <span><span style="color: var(--vermillion);">—</span> Extracted action items</span>
+            <span style="color: var(--ink);">4 / 4</span>
+          </div>
+          {% for it in [
+            ("Investigate Stripe payment gateway timeout", "AG", "p-urgent", "Urgent", "0.94"),
+            ("Send v1 API deprecation notice", "PS", "p-medium", "Med", "0.82"),
+            ("Migrate auth service to OAuth2", "MC", "p-high", "High", "0.91"),
+            ("Compliance review of onboarding emails", "MC", "p-high", "High", "0.89")
+          ] %}
+          <div class="flex items-center justify-between" style="gap: 10px; padding: 10px 12px; border: 1px solid var(--ink); margin-bottom: 8px; background: var(--bg-elev);">
+            <div>
+              <div style="font-size: 13px; font-weight: 500;">{{ it[0] }}</div>
+              <div class="mono flex items-center" style="gap: 6px; font-size: 10px; color: var(--muted); margin-top: 4px; text-transform: uppercase;">
+                <span style="color: var(--vermillion);">{{ it[1] }}</span>
+                <span class="pill {{ it[2] }}" style="font-size: 9.5px;">{{ it[3] }}</span>
+              </div>
+            </div>
+            <span class="conf conf-hi">{{ it[4] }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Marquee -->
+    <div class="reveal" style="margin-top: 80px;">
+      <div class="hard-rule">
+        <span class="num">004</span><span>BUILT FOR TEAMS USING</span><span class="spacer"></span>
+        <span style="color: var(--muted);">SUPPORTED INTEGRATIONS</span>
+      </div>
+      <div class="marquee" style="margin-top: 18px;">
+        <div class="marquee-track">
+          {% for name in ["Linear", "Slack", "Zoom", "Google Meet", "Otter.ai", "Notion", "GitHub", "Loom", "Linear", "Slack", "Zoom", "Google Meet", "Otter.ai", "Notion", "GitHub", "Loom"] %}
+          <span class="marquee-item">
+            <span class="serif-italic" style="font-size: 26px; color: {{ 'var(--vermillion)' if loop.index0 % 4 == 0 else 'var(--ink)' }};">{{ name }}</span>
+            <span style="color: var(--muted-2);">—</span>
+          </span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" style="padding: 120px 0 96px;">
+  <div class="container">
+    <div class="hard-rule reveal">
+      <span class="num">II</span><span>How it works</span><span class="spacer"></span>
+      <span style="color: var(--muted);">3 STAGES, 1 SOURCE OF TRUTH</span>
+    </div>
+    <div class="reveal grid" style="margin-top: 40px; gap: 48px; grid-template-columns: 1fr 2fr;">
+      <h2 class="section-title">A pipeline you can <span class="ital" style="color: var(--vermillion);">actually</span> trust.</h2>
+      <p class="body-text" style="max-width: 540px; font-size: 17px;">
+        Three stages, one source of truth. Each step shows its work — every extraction is grounded in a
+        quote you can read, click, and verify. <span class="serif-italic" style="color: var(--ink); font-size: 19px;">No hallucinations.</span>
+      </p>
+    </div>
+    <div class="reveal grid feature-grid" style="margin-top: 56px; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--ink); border-left: 1px solid var(--ink);">
+      {% for f in [
+        ("01", "Extract with confidence", "Confidence-scored items with the source quote attached to every extraction. The model shows its receipts."),
+        ("02", "Smart assignee match", "Fuzzy-matches transcript names — first names, nicknames, typos — to your Linear team. ~95% accuracy on real meetings."),
+        ("03", "Review before push", "Bulk actions, inline edits, source-of-truth quotes. No surprises in your board. The human stays in the loop.")
+      ] %}
+      <div style="padding: 32px; border-right: 1px solid var(--ink); border-bottom: 1px solid var(--ink);">
+        <span class="mono" style="color: var(--vermillion); font-size: 14px; font-weight: 600;">{{ f[0] }}</span>
+        <h3 class="display" style="font-size: 28px; margin-top: 24px; font-weight: 500;">{{ f[1] }}</h3>
+        <p class="body-text" style="margin-top: 12px; font-size: 14px; color: var(--ink-2);">{{ f[2] }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section id="impact" style="padding: 96px 0;">
+  <div class="container">
+    <div class="hard-rule reveal">
+      <span class="num">III</span><span>The math</span><span class="spacer"></span>
+      <span style="color: var(--muted);">BUSINESS IMPACT</span>
+    </div>
+    <h2 class="display display-lg reveal" style="margin-top: 48px; max-width: 900px;">
+      Save <span style="color: var(--vermillion);" class="ital">$130K</span>
+      <span style="color: var(--muted); font-weight: 300; font-style: italic;">per year on a</span> 20-person team.
+    </h2>
+    <div class="reveal grid stat-grid" style="margin-top: 48px; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--ink);">
+      {% for s in [("6", "hrs/wk", "PM time on manual ticket conversion."), ("95", "%", "Reduction in that overhead with TicketForge."), ("10", "min", "Average time per meeting end-to-end."), ("142", "K", "Tickets created across teams using TicketForge.")] %}
+      <div style="padding: 32px 24px; border-right: 1px solid var(--ink); border-bottom: 1px solid var(--ink);">
+        <div class="display" style="font-size: clamp(48px, 6vw, 84px); font-weight: 500; line-height: 0.95;">
+          {{ s[0] }}<span class="mono" style="font-size: 14px; margin-left: 6px; opacity: 0.7; vertical-align: top;">{{ s[1] }}</span>
+        </div>
+        <div class="mono" style="font-size: 11px; margin-top: 18px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7;">{{ s[2] }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="body-text reveal" style="margin-top: 48px; max-width: 720px; font-size: 16px;">
+      Engineering managers spend 4–6 hours per week converting meeting notes into tickets. For a 20-person
+      product + engineering team at an average loaded cost of $90K/year, that's
+      <span style="color: var(--ink); font-weight: 600;">$144K/year</span> in lost capacity. TicketForge
+      reduces this to ~10 minutes per meeting.
+    </p>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="hard-rule">
+      <span class="num">∞</span><span>Index</span><span class="spacer"></span>
+      <span style="color: var(--muted);">FILED 2026</span>
+    </div>
+    <div style="margin-top: 40px;">
+      <a href="/" class="serif-italic" style="font-size: 36px; color: var(--ink);">TicketForge</a>
+      <p class="body-text" style="max-width: 380px; margin-top: 12px; font-size: 14px;">
+        Meetings → tickets, in seconds. No more transcription archaeology on Friday afternoon.
+      </p>
+    </div>
+    <div class="reveal" style="margin-top: 48px;"><div class="word-huge">TicketForge</div></div>
+  </div>
+</footer>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Pushed — TicketForge{% endblock %}
+{% block nav %}<a href="/">Home</a><a href="/extract">Extract</a>{% endblock %}
+
+{% block body %}
+<div style="position: relative; padding: 96px 0 120px;">
+  <div class="atmos"><div class="aurora"></div></div>
+  <main class="z2 container-app">
+    <div style="max-width: 640px; margin-inline: auto;">
+      <div class="surface-card" style="overflow: hidden;">
+        <div style="text-align: center; padding: 56px 32px 32px; background: linear-gradient(180deg, var(--forge-soft), transparent); border-bottom: 1px solid var(--line);">
+          <div style="margin-inline: auto; width: 64px; height: 64px; border-radius: 50%; background: var(--bg-elev); border: 1px solid var(--forge-ring); box-shadow: var(--shadow-glow); display: inline-flex; align-items: center; justify-content: center;">
+            <div class="success-check">✓</div>
+          </div>
+          <h1 class="display display-md" style="margin-top: 24px;">
+            {{ results | length }} ticket{{ '' if results | length == 1 else 's' }} created in
+            <span class="serif-italic" style="color: var(--ink);">{{ destination_label }}</span>.
+          </h1>
+          <p style="margin: 12px auto 0; max-width: 420px; font-size: 14px; line-height: 1.6; color: var(--muted);">
+            Pushed to your Linear workspace. Owners have been notified according to your team's default workflow.
+          </p>
+        </div>
+
+        <ul style="margin: 0; padding: 0; list-style: none;">
+          {% for r in results %}
+          <li class="result-row">
+            <span class="result-id">{{ r.identifier }}</span>
+            <span style="flex: 1; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ r.title }}</span>
+            <a href="{{ r.url }}" target="_blank" rel="noreferrer" style="color: var(--muted-2);" aria-label="Open in Linear">↗</a>
+          </li>
+          {% endfor %}
+        </ul>
+
+        {% if skipped %}
+        <div class="alert alert-warn" style="margin: 0; border-radius: 0; border-left: 0; border-right: 0;">
+          ⚠ <strong>{{ skipped }} low-confidence item{{ '' if skipped == 1 else 's' }}</strong> flagged in review — push them anyway by re-running extract.
+        </div>
+        {% endif %}
+
+        <div class="flex items-center justify-center gap-3 flex-wrap" style="padding: 20px 24px; border-top: 1px solid var(--line);">
+          {% if results %}
+          <a href="{{ results[0].url }}" target="_blank" rel="noreferrer" class="btn btn-primary">↗ Open in {{ destination_label }}</a>
+          {% endif %}
+          <a href="/extract" class="btn btn-secondary">↻ Process another transcript</a>
+        </div>
+
+        <div style="padding: 12px 24px; text-align: center; font-size: 12px; border-top: 1px solid var(--line); background: var(--bg-quiet); color: var(--muted);">
+          {{ results | length }} ticket{{ '' if results | length == 1 else 's' }} live in
+          <span style="font-weight: 500; color: var(--ink);">{{ destination_label }}</span>{% if manual_time_minutes %} · AI estimate of manual time: <span style="font-weight: 500; color: var(--ink);">~{{ manual_time_minutes }} min</span>{% endif %}.
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}

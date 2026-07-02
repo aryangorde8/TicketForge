@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Extract — TicketForge{% endblock %}
+{% block nav %}
+<a href="/">Home</a>
+<a href="/extract" style="color: var(--ink);">Extract</a>
+{% endblock %}
+
+{% block body %}
+<div style="position: relative; padding: 64px 0 96px;">
+  <div class="atmos" style="height: 480px;"><div class="aurora"></div></div>
+  <div class="z2 container-app">
+
+    <!-- Timeline -->
+    <div class="timeline-strip reveal" style="margin-bottom: 36px;">
+      <span class="tl-step active"><span class="num">01</span> Paste transcript</span>
+      <span class="tl-sep">›</span>
+      <span class="tl-step"><span class="num">02</span> Extract</span>
+      <span class="tl-sep">›</span>
+      <span class="tl-step"><span class="num">03</span> Review</span>
+      <span class="tl-sep">›</span>
+      <span class="tl-step"><span class="num">04</span> Push to Linear</span>
+    </div>
+
+    <div class="reveal" style="max-width: 720px;">
+      <h1 class="display display-lg">Paste your <span class="serif-italic" style="color: var(--ink);">meeting</span> transcript.</h1>
+      <p class="lede" style="margin-top: 18px;">
+        We'll extract action items, assignees, priorities, and due dates — every item linked back to the
+        exact line it came from.
+      </p>
+    </div>
+
+    {% if not groq_configured %}
+    <div class="alert alert-warn">
+      <strong>GROQ_API_KEY is not set.</strong> Extraction will fail until you add it to
+      <code>.env</code> and restart the server. See <code>.env.example</code>.
+    </div>
+    {% endif %}
+
+    <form id="extract-form" method="post" action="/extract" class="reveal" style="margin-top: 40px;">
+      <div class="surface-card" style="overflow: hidden;">
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div class="flex items-center gap-2">
+            <button type="button" id="record-btn" class="mic-btn">🎙 Record meeting</button>
+            <span id="record-status" class="mono" style="display: none; font-size: 12px; color: var(--forge);"></span>
+          </div>
+          <div class="mono" style="font-size: 11px; color: var(--muted-2);">🔒 Private to you</div>
+        </div>
+
+        <!-- Textarea -->
+        <textarea id="transcript" name="transcript" class="transcript-area"
+          placeholder="Paste the transcript here — Zoom auto-transcript, Otter export, Notion meeting notes, anything readable.&#10;&#10;Speaker labels like Marcus: dramatically improve assignee matching.">{{ prefill }}</textarea>
+
+        <!-- Footer toolbar -->
+        <div class="toolbar bottom">
+          <div class="flex items-center gap-2" style="flex-wrap: wrap; font-size: 13px;">
+            <span style="color: var(--forge);">✦</span>
+            <span style="font-weight: 500; color: var(--ink-2);">Try an example:</span>
+            {% for s in scenarios %}
+            <button type="button" class="chip sample-chip" data-scenario="{{ s.id }}" title="{{ s.description }}">
+              <span style="margin-right: 4px;">{{ s.emoji }}</span>{{ s.label }}
+            </button>
+            {% endfor %}
+          </div>
+          <div class="mono" style="font-size: 11px; color: var(--muted-2);">
+            <span id="char-count" style="color: var(--ink-2);">0</span> / 25,000 chars
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="flex items-center gap-3" style="margin-top: 24px; flex-wrap: wrap;">
+        <button type="submit" id="extract-btn" class="btn btn-primary btn-lg">
+          <span id="extract-btn-label">✦ Extract Action Items <span class="kbd">⌘ ↵</span></span>
+        </button>
+        <button type="button" id="clear-btn" class="btn btn-secondary btn-lg">Clear</button>
+        <span class="badge-live ml-auto">
+          <span class="dot" style="background: var(--forge);"></span>
+          Powered by Llama 3.3 70B · Groq · avg 3 sec
+        </span>
+      </div>
+    </form>
+
+    {% if error %}
+    <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+
+    <!-- Phase indicator (shown by JS while extracting) -->
+    <div id="phases" style="display: none; margin-top: 24px; display: none; gap: 8px;">
+      <div class="phase-row" data-phase="0"><span class="dot"></span> Analyzing transcript</div>
+      <div class="phase-row" data-phase="1"><span class="dot"></span> Extracting action items</div>
+      <div class="phase-row" data-phase="2"><span class="dot"></span> Matching assignees</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- sample transcripts embedded for the example chips -->
+<script id="samples-data" type="application/json">{{ scenarios_json | safe }}</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/extract.js"></script>
+{% endblock %}
